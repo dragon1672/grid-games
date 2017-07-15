@@ -1,0 +1,43 @@
+package common.utils;
+
+/**
+ * Immutable 3 dimensional vector of ints
+ */
+public class IntVector2 {
+    public final int x, y;
+
+    private IntVector2(int x, int y) {
+        this.x = x;
+        this.y = y;
+    }
+
+    public static IntVector2 of(int x, int y) {
+        return new IntVector2(x, y);
+    }
+
+    public IntVector2 add(IntVector2 that) {
+        return of(this.x + that.x, this.y + that.y);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        IntVector2 that = (IntVector2) o;
+
+        return x == that.x && y == that.y;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = x;
+        result = 31 * result + y;
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("{%d,%d}", x, y);
+    }
+}

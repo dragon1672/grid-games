@@ -1,0 +1,76 @@
+package common.board;
+
+import common.utils.AsciiBoard;
+
+import java.util.Arrays;
+
+import static com.google.common.base.Preconditions.checkArgument;
+
+/**
+ * Game Board
+ */
+public class BoardImpl<T> implements Board<T> {
+
+    private final T board[][];
+
+    private BoardImpl(int width, int height) {
+        checkArgument(width > 0, "Width must be greater than 0");
+        checkArgument(height > 0, "Height must be greater than 0");
+        //noinspection unchecked
+        board = (T[][]) new Object[width][height];
+    }
+
+    public static <T> Board<T> make(int width, int height) {
+        return new BoardImpl<>(width, height);
+    }
+
+    private void validatePosition(int x, int y) {
+        checkArgument(0 <= x, "x must be positive");
+        checkArgument(0 <= y, "y must be positive");
+        checkArgument(x < getWidth(), "x must be less than " + getWidth());
+        checkArgument(y < getHeight(), "x must be less than " + getHeight());
+    }
+
+    @Override
+    public T get(int x, int y) {
+        validatePosition(x, y);
+        return board[x][y];
+    }
+
+    @Override
+    public int getWidth() {
+        return board.length;
+    }
+
+    @Override
+    public int getHeight() {
+        assert board.length > 0;
+        return board[0].length;
+    }
+
+    @Override
+    public void set(T block, int x, int y) {
+        validatePosition(x, y);
+        board[x][y] = block;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        BoardImpl board1 = (BoardImpl) o;
+
+        return Arrays.deepEquals(board, board1.board);
+    }
+
+    @Override
+    public int hashCode() {
+        return Arrays.deepHashCode(board);
+    }
+
+    @Override
+    public String toString() {
+        return AsciiBoard.boardToString(this);
+    }
+}
