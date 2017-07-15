@@ -19,6 +19,10 @@ public class IntVector2 {
         return of(this.x + that.x, this.y + that.y);
     }
 
+    public IntVector2 mul(float scale) {
+        return of((int) (x * scale), (int) (y * scale));
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
