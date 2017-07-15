@@ -2,6 +2,9 @@ package lights_out;
 
 import common.utils.Flogger;
 
+/**
+ * Online example: https://www.chiark.greenend.org.uk/~sgtatham/puzzles/js/flood.html
+ */
 public class Driver {
     private static final Flogger logger = Flogger.getInstance();
 

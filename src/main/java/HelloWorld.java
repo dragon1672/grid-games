@@ -1,0 +1,10 @@
+public class HelloWorld {
+    public static void main(String... args) {
+        System.out.println("This is a collection of simple grid based games");
+        System.out.println("Here are some additional game ideas");
+        System.out.println("Tents: https://www.chiark.greenend.org.uk/~sgtatham/puzzles/js/tents.html");
+        System.out.println("popit: https://www.chiark.greenend.org.uk/~sgtatham/puzzles/js/samegame.html");
+        System.out.println("minesweeper: https://www.chiark.greenend.org.uk/~sgtatham/puzzles/js/mines.html");
+        System.out.println("flood it: https://www.chiark.greenend.org.uk/~sgtatham/puzzles/js/flood.html");
+    }
+}
