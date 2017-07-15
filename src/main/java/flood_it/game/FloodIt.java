@@ -54,6 +54,7 @@ public class FloodIt implements Game {
         return game;
     }
 
+    @Override
     public ReadOnlyBoard<BlockColor> getBoard() {
         return board;
     }

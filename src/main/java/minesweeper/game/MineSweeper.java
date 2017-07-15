@@ -126,6 +126,7 @@ public class MineSweeper implements Game {
         return hasWon() || hasLost();
     }
 
+    @Override
     public ReadOnlyBoard<Cell> getBoard() {
         return board;
     }
