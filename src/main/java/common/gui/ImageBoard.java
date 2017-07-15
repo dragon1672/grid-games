@@ -24,7 +24,7 @@ class ImageBoard<T> extends BoardGrid<T> {
         return BoardGui.getCellDimensions(board);
     }
 
-    private void paintBoardWithColors(Graphics g, ReadOnlyBoard<T> board) {
+    private void paintBoardWithImages(Graphics g, ReadOnlyBoard<T> board) {
         for (int x = 0; x < board.getWidth(); x++) {
             for (int y = 0; y < board.getHeight(); y++) {
                 IntVector2 pos = IntVector2.of(x, y);
@@ -43,6 +43,6 @@ class ImageBoard<T> extends BoardGrid<T> {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        paintBoardWithColors(g, board);
+        paintBoardWithImages(g, board);
     }
 }
