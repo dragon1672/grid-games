@@ -10,9 +10,9 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * AI will try and maximize perimeter with each move
+ * MineSweeperAI will try and maximize perimeter with each move
  */
-public class MaxPerimeterAi implements AI {
+public class MaxPerimeterFlooditAi implements FlooditAI {
 
     private static int getBoardPerimeter(ReadOnlyBoard<BlockColor> board) {
         Set<IntVector2> connectedSquares = BoardUtilities.getConnectedColors(board);

@@ -10,7 +10,7 @@ import java.util.Random;
 /**
  * Randomly Fills junk
  */
-public class RandomAi implements AI {
+public class RandomFlooditAi implements FlooditAI {
     private static final Random rand = new Random();
 
     @Override

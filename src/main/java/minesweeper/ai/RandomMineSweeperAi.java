@@ -6,7 +6,7 @@ import common.utils.RandomUtils;
 import minesweeper.game.BoardUtils;
 import minesweeper.game.Cell;
 
-public class RandomAi implements AI {
+public class RandomMineSweeperAi implements MineSweeperAI {
 
     @Override
     public IntVector2 getMove(ReadOnlyBoard<Cell> board) {

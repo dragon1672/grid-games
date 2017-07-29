@@ -11,9 +11,9 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
- * AI will try take any move that will convert the most blocks
+ * MineSweeperAI will try take any move that will convert the most blocks
  */
-public class MaxAreaAi implements AI {
+public class MaxAreaFlooditAi implements FlooditAI {
 
     @Override
     public BlockColor getMove(FloodIt game) {

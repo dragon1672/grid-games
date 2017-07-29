@@ -18,7 +18,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 /**
  * MineSweeper game
  */
-public class MineSweeper implements Game {
+public class MineSweeper implements Game<Cell> {
 
     private final ImmutableList<IntVector2> DIRECTIONS = ImmutableList.of(
             IntVector2.of(1, 1),
