@@ -24,6 +24,16 @@ public class BoardImpl<T> implements Board<T> {
         return new BoardImpl<>(width, height);
     }
 
+    public static <T> Board<T> copyOf(ReadOnlyBoard<T> board) {
+        Board<T> duplicatedBoard = new BoardImpl<>(board.getWidth(), board.getHeight());
+        for (int x = 0; x < board.getWidth(); x++) {
+            for (int y = 0; y < board.getHeight(); y++) {
+                duplicatedBoard.set(board.get(x, y), x, y);
+            }
+        }
+        return duplicatedBoard;
+    }
+
     private void validatePosition(int x, int y) {
         checkArgument(0 <= x, "x must be positive");
         checkArgument(0 <= y, "y must be positive");
