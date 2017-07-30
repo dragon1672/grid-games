@@ -26,3 +26,5 @@ It's minesweeper! try to not click a bomb
 
 ## Pop it
 
+"pop" a cell and remaining cells will drop down and to the left.
+You can only pop cells of 2 or more.

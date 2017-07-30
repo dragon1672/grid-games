@@ -8,6 +8,8 @@ import common.utils.IntVector2;
 
 import java.util.Set;
 
+import static com.google.common.base.Preconditions.checkArgument;
+
 public class PopItGame implements Game<BlockColor> {
     private int score;
     private ReadOnlyBoard<BlockColor> board;
@@ -32,6 +34,9 @@ public class PopItGame implements Game<BlockColor> {
 
     public int popAt(IntVector2 move) {
         Set<IntVector2> poppedPositions = BoardUtils.getConnectedCells(board, move);
+
+        checkArgument(poppedPositions.size() > 1, "Move must pop at least 2 cells");
+
         this.board = PopItBoardUtilities.removeCells(board, poppedPositions);
 
         int pointsGained = calculateScore(poppedPositions.size());
