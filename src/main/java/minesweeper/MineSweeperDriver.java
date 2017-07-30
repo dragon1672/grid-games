@@ -23,7 +23,7 @@ public class MineSweeperDriver {
 
     private static Image loadImage(String fileName) {
         try {
-            String fullPath = String.format("D:/AnthonyThings/Repos/Java/game_collection/src/main/java/minesweeper/assets/%s.PNG",fileName);
+            String fullPath = String.format("src/main/java/minesweeper/assets/%s", fileName);
             return ImageIO.read(new File(fullPath));
         } catch (IOException e) {
             e.printStackTrace();
@@ -31,18 +31,19 @@ public class MineSweeperDriver {
         }
     }
 
+    // Map each cell to a file
     private static final ImmutableMap<Cell,Image> cellMap = ImmutableMap.<Cell,Image>builder()
-            .put(Cell.N0, loadImage("0"))
-            .put(Cell.N1, loadImage("1"))
-            .put(Cell.N2, loadImage("2"))
-            .put(Cell.N3, loadImage("3"))
-            .put(Cell.N4, loadImage("4"))
-            .put(Cell.N5, loadImage("5"))
-            .put(Cell.N6, loadImage("6"))
-            .put(Cell.N7, loadImage("7"))
-            .put(Cell.N8, loadImage("8"))
-            .put(Cell.BOMB, loadImage("BOMB"))
-            .put(Cell.EMPTY, loadImage("EMPTY"))
+            .put(Cell.N0, loadImage("0.PNG"))
+            .put(Cell.N1, loadImage("1.PNG"))
+            .put(Cell.N2, loadImage("2.PNG"))
+            .put(Cell.N3, loadImage("3.PNG"))
+            .put(Cell.N4, loadImage("4.PNG"))
+            .put(Cell.N5, loadImage("5.PNG"))
+            .put(Cell.N6, loadImage("6.PNG"))
+            .put(Cell.N7, loadImage("7.PNG"))
+            .put(Cell.N8, loadImage("8.PNG"))
+            .put(Cell.BOMB, loadImage("BOMB.PNG"))
+            .put(Cell.EMPTY, loadImage("EMPTY.PNG"))
             .build();
 
     private static void runAi(MineSweeperAI ai, MineSweeper game) throws InterruptedException {
