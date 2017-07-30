@@ -28,3 +28,25 @@ It's minesweeper! try to not click a bomb
 
 "pop" a cell and remaining cells will drop down and to the left.
 You can only pop cells of 2 or more.
+
+### First Path Non Recursive
+
+Returns the first valid path it can find. It favors moves that maximize possible
+future moves. The non recursive bit was me playing around with performance.
+
+https://youtu.be/4NlQJ1bQlIc
+
+### Recursive Board Heuristic
+
+Returns the first valid path it can find. It favors moves that maximize possible
+future moves. 
+
+The board heuristic could use some tweaking, to instead favor higher scoring moves.
+
+https://youtu.be/bRS_RnodlTI
+
+### Recursive First Path
+
+Does not favor any moves and just tries any possibility it can
+
+https://youtu.be/gAUn8hRk9hc
