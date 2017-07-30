@@ -14,7 +14,7 @@ public class BoardGui<T> extends JFrame {
     static final int windowDimensions = 1000;
 
     static <T> int getCellDimensions(ReadOnlyBoard<T> board) {
-        return (windowDimensions - outerPadding) / Math.max(board.getWidth(), board.getHeight()) - cellPadding;
+        return (windowDimensions - outerPadding) / Math.max(board.getWidth() + 1, board.getHeight() + 1) - cellPadding;
     }
 
     static IntVector2 getStartPos(IntVector2 coordinate, int cellDimensions) {

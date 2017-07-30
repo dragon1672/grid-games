@@ -44,6 +44,11 @@ class ColorBoard<T> extends BoardGrid<T> {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        paintBoardWithColors(g, board);
+        if (board != null) {
+            paintBoardWithColors(g, board);
+        } else {
+            String message = "Board Still Loading...";
+            g.drawChars(message.toCharArray(), 0, message.length(), 100, 100);
+        }
     }
 }
