@@ -8,7 +8,10 @@ import popit.game.BlockColor;
 import popit.game.PopItBoardUtilities;
 import popit.game.PopItGame;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.Stack;
 
 /**
  * Explores all possible outcomes and returns the best solutions
@@ -92,18 +95,15 @@ public class ExhaustiveAINoRecursive extends AI {
                 .map(move -> new MovePossibility(originalBoard, move))
                 .forEach(possibleMoves::add);
 
-        Set<MovePossibility> completedMoves = new HashSet<>();
-
-        int currentMaxScore = 0;
+        MovePossibility bestGame = null;
 
         while (!possibleMoves.isEmpty()) {
             MovePossibility possibleMove = possibleMoves.pop();
             gui.updateBoard(possibleMove.boardInstance);
 
             if (possibleMove.isComplete() || AI.unWinnable(possibleMove.boardInstance)) {
-                if (possibleMove.isComplete() && possibleMove.score > currentMaxScore) {
-                    currentMaxScore = Math.max(currentMaxScore, possibleMove.score);
-                    completedMoves.add(possibleMove);
+                if (possibleMove.isComplete() && (bestGame == null || possibleMove.score > bestGame.score)) {
+                    bestGame = possibleMove;
                 }
             } else {
                 getAllPossibleMoves(possibleMove.boardInstance).stream()
@@ -111,8 +111,6 @@ public class ExhaustiveAINoRecursive extends AI {
                         .forEach(possibleMoves::add);
             }
         }
-
-        MovePossibility bestGame = completedMoves.stream().max(Comparator.comparingInt(move -> move.score)).orElseThrow(() -> new IllegalArgumentException("Un winnable game"));
 
         return extractMoves(bestGame);
     }
