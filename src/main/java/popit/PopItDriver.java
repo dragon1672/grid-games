@@ -7,6 +7,7 @@ import common.utils.Flogger;
 import common.utils.IntVector2;
 import popit.ai.FirstPathNonRecursive;
 import popit.ai.PopItAi;
+import popit.ai.SmartNoRecursive;
 import popit.game.BlockColor;
 import popit.game.PopItGame;
 
@@ -104,6 +105,7 @@ public class PopItDriver {
         //ai = new RecursiveBoardHeuristic(gui);
         //ai = new RecursiveFirstPath(gui);
         //ai = new SmartestAI(gui);
+        ai = new SmartNoRecursive(gui);
 
         // Run Simulation
         runAi(ai, game, gui);

@@ -56,12 +56,14 @@ public class SmartestAI extends AI {
             return -1;
         }
         Map<Integer, List<IntVector2>> scoreToMoves = new HashMap<>();
+        final int[] currentMax = {0};
         possibleMoves.parallelStream().forEach(move -> {
             List<IntVector2> moves = new ArrayList<>();
             gui.updateBoard(boardToUse);
             int moveMaxScore = getMaxMoveScore(boardToUse, move, moves);
-            if (moveMaxScore > 0) {
+            if (moveMaxScore > currentMax[0]) {
                 synchronized (scoreToMoves) {
+                    currentMax[0] = Math.max(currentMax[0], moveMaxScore);
                     scoreToMoves.put(moveMaxScore, moves);
                 }
             }
