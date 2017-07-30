@@ -28,18 +28,18 @@ public class PopItGame implements Game<BlockColor> {
         return board;
     }
 
-    public static int calculateScore(int numCellsPopped) {
+    public static long calculateScore(long numCellsPopped) {
         return numCellsPopped * numCellsPopped - numCellsPopped;
     }
 
-    public int popAt(IntVector2 move) {
+    public long popAt(IntVector2 move) {
         Set<IntVector2> poppedPositions = BoardUtils.getConnectedCells(board, move);
 
         checkArgument(poppedPositions.size() > 1, "Move must pop at least 2 cells");
 
         this.board = PopItBoardUtilities.removeCells(board, poppedPositions);
 
-        int pointsGained = calculateScore(poppedPositions.size());
+        long pointsGained = calculateScore(poppedPositions.size());
         score += pointsGained;
 
         return pointsGained;

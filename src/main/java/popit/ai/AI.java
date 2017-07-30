@@ -5,6 +5,7 @@ import common.board.ReadOnlyBoard;
 import common.utils.BoardUtils;
 import common.utils.IntVector2;
 import popit.game.BlockColor;
+import popit.game.PopItGame;
 
 import java.util.*;
 import java.util.function.Function;
@@ -14,7 +15,7 @@ import java.util.stream.Collectors;
 /**
  * My Dumb AIs for the breaker game
  */
-public abstract class AI implements PopItAi {
+abstract class AI implements PopItAi {
     // TODO: Add more checks
     // These checks
     @SuppressWarnings("ArraysAsListWithZeroOrOneArgument")
@@ -79,5 +80,14 @@ public abstract class AI implements PopItAi {
                     }
                 });
         return possibleMoves;
+    }
+
+    static long maxPossibleScore(ReadOnlyBoard<BlockColor> board) {
+        return BoardUtils.boardPositionsAsStream(board)
+                .map(board::get)
+                .filter(color -> color != BlockColor.WHITES_INVALID)
+                .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()))
+                .values().stream()
+                .mapToLong(PopItGame::calculateScore).sum();
     }
 }

@@ -30,7 +30,7 @@ public class FirstPathNonRecursive extends AI {
         final MovePossibility parent;
         final ReadOnlyBoard<BlockColor> boardInstance;
         final IntVector2 moveToMake;
-        final int score;
+        final long score;
         final int boardHeuristic;
 
         MovePossibility(ReadOnlyBoard<BlockColor> boardInstance, IntVector2 moveToMake) {
@@ -55,6 +55,7 @@ public class FirstPathNonRecursive extends AI {
             return PopItBoardUtilities.isEmpty(this.boardInstance);
         }
 
+        @SuppressWarnings("SimplifiableIfStatement")
         @Override
         public boolean equals(Object o) {
             if (this == o) return true;
@@ -63,16 +64,19 @@ public class FirstPathNonRecursive extends AI {
             MovePossibility that = (MovePossibility) o;
 
             if (score != that.score) return false;
-            if (boardInstance != null ? !boardInstance.equals(that.boardInstance) : that.boardInstance != null)
-                return false;
-            return moveToMake != null ? moveToMake.equals(that.moveToMake) : that.moveToMake == null;
+            if (boardHeuristic != that.boardHeuristic) return false;
+            if (parent != null ? !parent.equals(that.parent) : that.parent != null) return false;
+            if (!boardInstance.equals(that.boardInstance)) return false;
+            return moveToMake.equals(that.moveToMake);
         }
 
         @Override
         public int hashCode() {
-            int result = boardInstance != null ? boardInstance.hashCode() : 0;
-            result = 31 * result + (moveToMake != null ? moveToMake.hashCode() : 0);
-            result = 31 * result + score;
+            int result = parent != null ? parent.hashCode() : 0;
+            result = 31 * result + boardInstance.hashCode();
+            result = 31 * result + moveToMake.hashCode();
+            result = 31 * result + (int) (score ^ (score >>> 32));
+            result = 31 * result + boardHeuristic;
             return result;
         }
     }

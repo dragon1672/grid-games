@@ -72,7 +72,7 @@ public class PopItDriver {
 
         List<IntVector2> moves = ai.getMoves(game.getBoard());
         for (IntVector2 move : moves) {
-            int newPoints = game.popAt(move);
+            long newPoints = game.popAt(move);
             logger.atInfo().log("move: %s, new points: %s, current score: %s\nboard\n%s", move, newPoints, game.getScore(), AsciiBoard.boardToString(game.getBoard()));
             gui.updateBoard(game.getBoard());
             Thread.sleep(1000);

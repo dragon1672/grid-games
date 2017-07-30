@@ -35,8 +35,8 @@ public class ExhaustiveAI extends AI {
         getMaxMoveScore(boardToUse, null, outputMoveList);
     }
 
-    private int getMaxMoveScore(ReadOnlyBoard<BlockColor> board, @Nullable IntVector2 pos, List<IntVector2> outputMoveList) {
-        int moveScore = 0;
+    private long getMaxMoveScore(ReadOnlyBoard<BlockColor> board, @Nullable IntVector2 pos, List<IntVector2> outputMoveList) {
+        long moveScore = 0;
         ReadOnlyBoard<BlockColor> boardToUse;
         if (pos != null) {
 
@@ -55,12 +55,12 @@ public class ExhaustiveAI extends AI {
         if (possibleMoves.isEmpty()) {
             return -1;
         }
-        Map<Integer, List<IntVector2>> scoreToMoves = new HashMap<>();
-        final int[] currentMax = {0};
+        Map<Long, List<IntVector2>> scoreToMoves = new HashMap<>();
+        final long[] currentMax = {0};
         possibleMoves.parallelStream().forEach(move -> {
             List<IntVector2> moves = new ArrayList<>();
             gui.updateBoard(boardToUse);
-            int moveMaxScore = getMaxMoveScore(boardToUse, move, moves);
+            long moveMaxScore = getMaxMoveScore(boardToUse, move, moves);
             if (moveMaxScore > currentMax[0]) {
                 synchronized (scoreToMoves) {
                     currentMax[0] = Math.max(currentMax[0], moveMaxScore);
@@ -70,10 +70,10 @@ public class ExhaustiveAI extends AI {
         });
 
 
-        Optional<Integer> maxScore = scoreToMoves.keySet().stream().max(Integer::compareTo);
-        int finalMoveScore = moveScore;
+        Optional<Long> maxScore = scoreToMoves.keySet().stream().max(Long::compareTo);
+        long finalMoveScore = moveScore;
         maxScore.map(returnScore -> returnScore + finalMoveScore);
         maxScore.ifPresent(score -> outputMoveList.addAll(scoreToMoves.get(score)));
-        return maxScore.orElse(-1);
+        return maxScore.orElse(-1L);
     }
 }

@@ -17,7 +17,6 @@ import java.util.Stack;
  * Explores all possible outcomes and returns the best solutions
  * Right now way to slow to be usable
  */
-@SuppressWarnings("unused")
 public class ExhaustiveAINoRecursive extends AI {
     private final BoardGui<BlockColor> gui;
 
@@ -29,7 +28,7 @@ public class ExhaustiveAINoRecursive extends AI {
         final MovePossibility parent;
         final ReadOnlyBoard<BlockColor> boardInstance;
         final IntVector2 moveToMake;
-        final int score;
+        final long score;
 
         MovePossibility(ReadOnlyBoard<BlockColor> boardInstance, IntVector2 moveToMake) {
             this.parent = null;
@@ -50,28 +49,6 @@ public class ExhaustiveAINoRecursive extends AI {
         boolean isComplete() {
             return PopItBoardUtilities.isEmpty(this.boardInstance);
         }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-
-            MovePossibility that = (MovePossibility) o;
-
-            return score == that.score && (boardInstance != null ? boardInstance.equals(that.boardInstance) : that.boardInstance == null) && (moveToMake != null ? moveToMake.equals(that.moveToMake) : that.moveToMake == null);
-        }
-
-        @Override
-        public int hashCode() {
-            int result = boardInstance != null ? boardInstance.hashCode() : 0;
-            result = 31 * result + (moveToMake != null ? moveToMake.hashCode() : 0);
-            result = 31 * result + score;
-            return result;
-        }
-    }
-
-    private MovePossibility convertToPossibleMove(ReadOnlyBoard<BlockColor> board, IntVector2 move) {
-        return new MovePossibility(board, move);
     }
 
     private static List<IntVector2> extractMoves(MovePossibility movePossibility) {
@@ -106,8 +83,11 @@ public class ExhaustiveAINoRecursive extends AI {
                     bestGame = possibleMove;
                 }
             } else {
+                MovePossibility finalBestGame = bestGame;
                 getAllPossibleMoves(possibleMove.boardInstance).stream()
                         .map(move -> new MovePossibility(possibleMove, move))
+                        .filter(move -> finalBestGame == null
+                                || AI.maxPossibleScore(move.boardInstance) + move.score > finalBestGame.score)
                         .forEach(possibleMoves::add);
             }
         }
