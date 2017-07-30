@@ -8,7 +8,7 @@ import flood_it.ai.FlooditAI;
 import flood_it.ai.MaxAreaFlooditAi;
 import flood_it.ai.MaxPerimeterFlooditAi;
 import flood_it.ai.RandomFlooditAi;
-import flood_it.game.BlockColor;
+import flood_it.game.FloodColor;
 import flood_it.game.FloodIt;
 
 import java.awt.*;
@@ -24,8 +24,8 @@ public class FlooditDriver {
     @SuppressWarnings("unused")
     private static final List<FlooditAI> AIs = ImmutableList.of(new RandomFlooditAi(), new MaxPerimeterFlooditAi(), new MaxAreaFlooditAi());
 
-    private static Color cell2Color(BlockColor blockColor) {
-        switch (blockColor) {
+    private static Color cell2Color(FloodColor floodColor) {
+        switch (floodColor) {
             case RED:
                 return Color.RED;
             case YELLOW:
@@ -43,14 +43,14 @@ public class FlooditDriver {
     }
 
     private static void runAi(FlooditAI ai, FloodIt game) throws InterruptedException {
-        BoardGui<BlockColor> gui = BoardGui.createColorBoard(FlooditDriver::cell2Color);
+        BoardGui<FloodColor> gui = BoardGui.createColorBoard(FlooditDriver::cell2Color);
         logger.atInfo().log("Staring MineSweeperAI moves");
 
         int moves = 0;
 
         while (!game.isComplete()) {
             moves++;
-            BlockColor move = ai.getMove(game);
+            FloodColor move = ai.getMove(game);
             logger.atInfo().log("MineSweeperAI picked color %s", move);
             game.floodColor(move);
             gui.updateBoard(game.getBoard());

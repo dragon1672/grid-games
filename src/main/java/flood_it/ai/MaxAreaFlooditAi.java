@@ -1,8 +1,9 @@
 package flood_it.ai;
 
-import flood_it.game.BlockColor;
-import flood_it.game.BoardUtilities;
+import common.utils.BoardUtils;
+import flood_it.game.FloodColor;
 import flood_it.game.FloodIt;
+import flood_it.game.FloodItBoardUtilities;
 
 import java.util.Comparator;
 import java.util.List;
@@ -16,14 +17,14 @@ import java.util.stream.Collectors;
 public class MaxAreaFlooditAi implements FlooditAI {
 
     @Override
-    public BlockColor getMove(FloodIt game) {
+    public FloodColor getMove(FloodIt game) {
 
-        List<BlockColor> possibleMoves = BoardUtilities.movesOnBoard(game.getBoard());
+        List<FloodColor> possibleMoves = FloodItBoardUtilities.movesOnBoard(game.getBoard());
 
-        Map<BlockColor, Integer> movedAndPerimeter = possibleMoves.stream()
-                .collect(Collectors.toMap(blockType -> blockType, blockType -> BoardUtilities.getConnectedColors(BoardUtilities.simulateFillMove(game.getBoard(), blockType)).size()));
+        Map<FloodColor, Integer> movedAndPerimeter = possibleMoves.stream()
+                .collect(Collectors.toMap(blockType -> blockType, blockType -> BoardUtils.getConnectedCells(FloodItBoardUtilities.simulateFillMove(game.getBoard(), blockType), FloodIt.MOVE_POS).size()));
 
-        Optional<Map.Entry<BlockColor, Integer>> maxEntry = movedAndPerimeter
+        Optional<Map.Entry<FloodColor, Integer>> maxEntry = movedAndPerimeter
                 .entrySet()
                 .stream()
                 .max(Comparator.comparingInt(Map.Entry::getValue));

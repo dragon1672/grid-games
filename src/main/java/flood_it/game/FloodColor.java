@@ -1,6 +1,6 @@
 package flood_it.game;
 
-public enum BlockColor {
+public enum FloodColor {
     RED,
     YELLOW,
     GREEN,

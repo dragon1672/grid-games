@@ -1,8 +1,8 @@
 package flood_it.ai;
 
-import flood_it.game.BlockColor;
-import flood_it.game.BoardUtilities;
+import flood_it.game.FloodColor;
 import flood_it.game.FloodIt;
+import flood_it.game.FloodItBoardUtilities;
 
 import java.util.List;
 import java.util.Random;
@@ -14,8 +14,8 @@ public class RandomFlooditAi implements FlooditAI {
     private static final Random rand = new Random();
 
     @Override
-    public BlockColor getMove(FloodIt game) {
-        List<BlockColor> possibleMoves = BoardUtilities.movesOnBoard(game.getBoard());
+    public FloodColor getMove(FloodIt game) {
+        List<FloodColor> possibleMoves = FloodItBoardUtilities.movesOnBoard(game.getBoard());
 
         return possibleMoves.get(rand.nextInt(possibleMoves.size()));
     }
