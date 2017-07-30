@@ -13,13 +13,13 @@ import java.util.*;
 
 /**
  * Explores all possible outcomes and returns the best solutions
- * Right now way to slow to be useable
+ * Right now way to slow to be usable
  */
 @SuppressWarnings("unused")
-public class SmartestAI extends AI {
+public class ExhaustiveAI extends AI {
     private final BoardGui<BlockColor> gui;
 
-    public SmartestAI(BoardGui<BlockColor> gui) {
+    public ExhaustiveAI(BoardGui<BlockColor> gui) {
         this.gui = gui;
     }
 
@@ -31,8 +31,8 @@ public class SmartestAI extends AI {
         return winningMoveSet;
     }
 
-    private int getMaxMoveScore(ReadOnlyBoard<BlockColor> boardToUse, List<IntVector2> outputMoveList) {
-        return getMaxMoveScore(boardToUse, null, outputMoveList);
+    private void getMaxMoveScore(ReadOnlyBoard<BlockColor> boardToUse, List<IntVector2> outputMoveList) {
+        getMaxMoveScore(boardToUse, null, outputMoveList);
     }
 
     private int getMaxMoveScore(ReadOnlyBoard<BlockColor> board, @Nullable IntVector2 pos, List<IntVector2> outputMoveList) {

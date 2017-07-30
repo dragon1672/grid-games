@@ -12,13 +12,13 @@ import java.util.*;
 
 /**
  * Explores all possible outcomes and returns the best solutions
- * Right now way to slow to be useable
+ * Right now way to slow to be usable
  */
 @SuppressWarnings("unused")
-public class SmartNoRecursive extends AI {
+public class ExhaustiveAINoRecursive extends AI {
     private final BoardGui<BlockColor> gui;
 
-    public SmartNoRecursive(BoardGui<BlockColor> gui) {
+    public ExhaustiveAINoRecursive(BoardGui<BlockColor> gui) {
         this.gui = gui;
     }
 
@@ -55,10 +55,7 @@ public class SmartNoRecursive extends AI {
 
             MovePossibility that = (MovePossibility) o;
 
-            if (score != that.score) return false;
-            if (boardInstance != null ? !boardInstance.equals(that.boardInstance) : that.boardInstance != null)
-                return false;
-            return moveToMake != null ? moveToMake.equals(that.moveToMake) : that.moveToMake == null;
+            return score == that.score && (boardInstance != null ? boardInstance.equals(that.boardInstance) : that.boardInstance == null) && (moveToMake != null ? moveToMake.equals(that.moveToMake) : that.moveToMake == null);
         }
 
         @Override
@@ -117,8 +114,6 @@ public class SmartNoRecursive extends AI {
 
         MovePossibility bestGame = completedMoves.stream().max(Comparator.comparingInt(move -> move.score)).orElseThrow(() -> new IllegalArgumentException("Un winnable game"));
 
-        List<IntVector2> moves = extractMoves(bestGame);
-
-        return moves;
+        return extractMoves(bestGame);
     }
 }
