@@ -10,7 +10,7 @@ import java.util.function.Function;
  */
 public class AsciiBoard {
     public static <T> String boardToString(ReadOnlyBoard<T> gameBoard) {
-        return boardToString(gameBoard, cell -> cell.toString().charAt(0));
+        return boardToString(gameBoard, cell -> cell != null ? cell.toString().charAt(0) : ' ');
     }
 
     public static <T> String boardToString(ReadOnlyBoard<T> gameBoard, Function<T, Character> cellToChar) {

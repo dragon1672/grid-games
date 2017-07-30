@@ -19,6 +19,10 @@ public class IntVector2 {
         return of(this.x + that.x, this.y + that.y);
     }
 
+    public IntVector2 sub(IntVector2 that) {
+        return of(this.x - that.x, this.y - that.y);
+    }
+
     public IntVector2 mul(float scale) {
         return of((int) (x * scale), (int) (y * scale));
     }

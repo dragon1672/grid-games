@@ -6,7 +6,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Log Wrapper
+ * Log Wrapper to standardise printing messages
  */
 public class Flogger {
     private static final Flogger instance = new Flogger(Logger.getGlobal());
