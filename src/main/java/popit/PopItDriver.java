@@ -40,7 +40,7 @@ public class PopItDriver {
     }
 
     private static String getStaticBoardString() {
-        //*
+        /*
         return "" +
                 "    Y    \n" +
                 "    Y    \n" +
