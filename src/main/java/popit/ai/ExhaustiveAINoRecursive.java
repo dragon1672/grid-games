@@ -29,6 +29,7 @@ public class ExhaustiveAINoRecursive extends AI {
         final ReadOnlyBoard<BlockColor> boardInstance;
         final IntVector2 moveToMake;
         final long score;
+        final long maxPossibleScore;
 
         MovePossibility(ReadOnlyBoard<BlockColor> boardInstance, IntVector2 moveToMake) {
             this.parent = null;
@@ -36,6 +37,7 @@ public class ExhaustiveAINoRecursive extends AI {
             Set<IntVector2> cellsToRemove = BoardUtils.getConnectedCells(boardInstance, moveToMake);
             this.boardInstance = PopItBoardUtilities.removeCells(boardInstance, cellsToRemove);
             this.score = PopItGame.calculateScore(cellsToRemove.size());
+            this.maxPossibleScore = AI.maxPossibleScore(this.boardInstance) + score;
         }
 
         MovePossibility(MovePossibility parent, IntVector2 moveToMake) {
@@ -44,6 +46,7 @@ public class ExhaustiveAINoRecursive extends AI {
             Set<IntVector2> cellsToRemove = BoardUtils.getConnectedCells(parent.boardInstance, moveToMake);
             this.boardInstance = PopItBoardUtilities.removeCells(parent.boardInstance, cellsToRemove);
             this.score = parent.score + PopItGame.calculateScore(cellsToRemove.size());
+            this.maxPossibleScore = AI.maxPossibleScore(this.boardInstance) + score;
         }
 
         boolean isComplete() {
@@ -87,7 +90,7 @@ public class ExhaustiveAINoRecursive extends AI {
                 getAllPossibleMoves(possibleMove.boardInstance).stream()
                         .map(move -> new MovePossibility(possibleMove, move))
                         .filter(move -> finalBestGame == null
-                                || AI.maxPossibleScore(move.boardInstance) + move.score > finalBestGame.score)
+                                || move.maxPossibleScore + move.score > finalBestGame.score)
                         .forEach(possibleMoves::add);
             }
         }

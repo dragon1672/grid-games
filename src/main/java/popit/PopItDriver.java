@@ -40,7 +40,7 @@ public class PopItDriver {
     }
 
     private static String getStaticBoardString() {
-        /*
+        //*
         return "" +
                 "    Y    \n" +
                 "    Y    \n" +
@@ -98,7 +98,7 @@ public class PopItDriver {
 
         PopItGame game = new PopItGame(initialBoard);
 
-        // Set an MineSweeperAI
+        // Set an PopItAiAI
         PopItAi ai;
         //ai = new FirstPathNonRecursive(gui);
         //ai = new RecursiveBoardHeuristic(gui);
