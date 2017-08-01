@@ -1,8 +1,9 @@
-package popit.ai;
+package popit.ai.exhaustiveAIs;
 
 import common.board.ReadOnlyBoard;
 import common.utils.BoardUtils;
 import common.utils.IntVector2;
+import popit.ai.AI;
 import popit.game.BlockColor;
 import popit.game.PopItBoardUtilities;
 import popit.game.PopItGame;

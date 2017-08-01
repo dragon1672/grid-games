@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 /**
  * My Dumb AIs for the breaker game
  */
-abstract class AI implements PopItAi {
+public abstract class AI implements PopItAi {
     // TODO: Add more checks
     // These checks
     @SuppressWarnings("ArraysAsListWithZeroOrOneArgument")
@@ -38,7 +38,7 @@ abstract class AI implements PopItAi {
      * @param board const board to check
      * @return true if current board cannot win, false if unknown
      */
-    static boolean unWinnable(ReadOnlyBoard<BlockColor> board) {
+    protected static boolean unWinnable(ReadOnlyBoard<BlockColor> board) {
         if (failIfTrueChecks.stream().anyMatch(checker -> checker.test(board))) {
             return true;
         }
@@ -55,7 +55,7 @@ abstract class AI implements PopItAi {
      * @param board board to evaluate
      * @return shortest list of all unique moves
      */
-    static Set<IntVector2> getAllPossibleMoves(ReadOnlyBoard<BlockColor> board) {
+    protected static Set<IntVector2> getAllPossibleMoves(ReadOnlyBoard<BlockColor> board) {
         return getAllPossibleMovesMap(board).keySet();
     }
 
@@ -82,7 +82,7 @@ abstract class AI implements PopItAi {
         return possibleMoves;
     }
 
-    static long maxPossibleScore(ReadOnlyBoard<BlockColor> board) {
+    public static long maxPossibleScore(ReadOnlyBoard<BlockColor> board) {
         return BoardUtils.boardPositionsAsStream(board)
                 .map(board::get)
                 .filter(color -> color != BlockColor.WHITES_INVALID)

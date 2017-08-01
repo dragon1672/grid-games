@@ -1,8 +1,9 @@
-package popit.ai;
+package popit.ai.exhaustiveAIs;
 
 import common.board.ReadOnlyBoard;
 import common.gui.BoardGui;
 import common.utils.IntVector2;
+import popit.ai.AI;
 import popit.game.BlockColor;
 
 import java.util.ArrayList;
