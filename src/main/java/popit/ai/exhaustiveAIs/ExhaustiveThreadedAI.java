@@ -94,7 +94,7 @@ public class ExhaustiveThreadedAI extends AI {
                 }
 
             }
-            return extractMoves(bestMove.orElseThrow(() -> new IllegalArgumentException("board not solveable")));
+            return extractMoves(bestMove.orElseThrow(() -> new IllegalArgumentException("board not solvable")));
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
             throw new RuntimeException(e);
