@@ -16,10 +16,10 @@ import java.util.*;
  * Right now way to slow to be usable
  */
 @SuppressWarnings("unused")
-public class ExhaustiveAI extends AI {
+public class ExhaustiveRecursiveAI extends AI {
     private final BoardGui<BlockColor> gui;
 
-    public ExhaustiveAI(BoardGui<BlockColor> gui) {
+    public ExhaustiveRecursiveAI(BoardGui<BlockColor> gui) {
         this.gui = gui;
     }
 
