@@ -37,42 +37,6 @@ public class ExhaustiveThreadedAI extends AI {
         moves.add(movePossibility.moveToMake);
     }
 
-    @Override
-    public List<IntVector2> getMoves(ReadOnlyBoard<BlockColor> originalBoard) {
-        ExecutorService executorService = Executors.newSingleThreadExecutor();
-        List<Future<TaskResult>> pendingTasks = new ArrayList<>();
-
-        Optional<MovePossibility> bestMove = Optional.empty();
-
-        pendingTasks.add(executorService.submit(() -> new TaskResult(Optional.empty(),
-                getAllPossibleMoves(originalBoard).stream()
-                        .map(move -> new MovePossibility(originalBoard, move))
-                        .collect(Collectors.toList())
-        )));
-
-        while (!pendingTasks.isEmpty()) {
-            pendingTasks.parallelStream().map(this::getFuture).findFirst(); // wait till something is resolved
-
-            List<Future<TaskResult>> completedTasks = pendingTasks.stream().filter(Future::isDone).collect(Collectors.toList());
-            pendingTasks.removeAll(completedTasks);
-
-            bestMove = getBestMove(bestMove, completedTasks.stream().map(this::getFuture).map(task -> task.bestMove).reduce(this::getBestMove).orElse(Optional.empty()));
-
-            try {
-                Optional<MovePossibility> currentBestMove = bestMove;
-                for (Future<TaskResult> taskResult : completedTasks) {
-                    pendingTasks.addAll(executorService.invokeAll(taskResult.get().newMoves.stream()
-                            .map(move -> (Callable<TaskResult>) () -> processMove(move, currentBestMove))
-                            .collect(Collectors.toList())));
-                }
-            } catch (InterruptedException | ExecutionException e) {
-                e.printStackTrace();
-                throw new RuntimeException(e);
-            }
-        }
-        return extractMoves(bestMove.orElseThrow(() -> new IllegalArgumentException("board not solveable")));
-    }
-
     private TaskResult processMove(MovePossibility move, Optional<MovePossibility> currentBestMove) {
         gui.updateBoard(move.boardInstance);
 
@@ -96,18 +60,44 @@ public class ExhaustiveThreadedAI extends AI {
         return new TaskResult(bestGame, generatedMoves.build());
     }
 
-    private static class TaskResult {
-        final Optional<MovePossibility> bestMove;
-        final List<MovePossibility> newMoves;
+    @Override
+    public List<IntVector2> getMoves(ReadOnlyBoard<BlockColor> originalBoard) {
+        ExecutorService executorService = Executors.newSingleThreadExecutor();
+        List<Future<TaskResult>> pendingTasks = new ArrayList<>();
 
-        private TaskResult(Optional<MovePossibility> bestMove, List<MovePossibility> newMoves) {
-            this.bestMove = bestMove;
-            this.newMoves = newMoves;
+        Optional<MovePossibility> bestMove = Optional.empty();
+
+        pendingTasks.add(executorService.submit(() -> new TaskResult(Optional.empty(),
+                getAllPossibleMoves(originalBoard).stream()
+                        .map(move -> new MovePossibility(originalBoard, move))
+                        .collect(Collectors.toList())
+        )));
+
+        while (!pendingTasks.isEmpty()) {
+            //noinspection ResultOfMethodCallIgnored
+            pendingTasks.parallelStream().map(this::getFuture).findFirst(); // wait till something is resolved
+
+            List<Future<TaskResult>> completedTasks = pendingTasks.stream().filter(Future::isDone).collect(Collectors.toList());
+            pendingTasks.removeAll(completedTasks);
+
+            bestMove = getBestMove(bestMove, completedTasks.stream().map(this::getFuture).map(task -> task.bestMove).reduce(ExhaustiveThreadedAI::getBestMove).orElse(Optional.empty()));
+
+            try {
+                Optional<MovePossibility> currentBestMove = bestMove;
+                for (Future<TaskResult> taskResult : completedTasks) {
+                    pendingTasks.addAll(executorService.invokeAll(taskResult.get().newMoves.stream()
+                            .map(move -> (Callable<TaskResult>) () -> processMove(move, currentBestMove))
+                            .collect(Collectors.toList())));
+                }
+            } catch (InterruptedException | ExecutionException e) {
+                e.printStackTrace();
+                throw new RuntimeException(e);
+            }
         }
+        return extractMoves(bestMove.orElseThrow(() -> new IllegalArgumentException("board not solveable")));
     }
 
-
-    private Optional<MovePossibility> getBestMove(Optional<MovePossibility> a, Optional<MovePossibility> b) {
+    private static Optional<MovePossibility> getBestMove(Optional<MovePossibility> a, Optional<MovePossibility> b) {
         return a.map(move -> move.score).orElse(0L) > b.map(move -> move.score).orElse(0L) ? a : b;
     }
 
@@ -118,5 +108,16 @@ public class ExhaustiveThreadedAI extends AI {
             e.printStackTrace();
             throw new RuntimeException(e);
         }
+    }
+
+    private static class TaskResult {
+        final Optional<MovePossibility> bestMove;
+        final List<MovePossibility> newMoves;
+
+        private TaskResult(Optional<MovePossibility> bestMove, List<MovePossibility> newMoves) {
+            this.bestMove = bestMove;
+            this.newMoves = newMoves;
+        }
+
     }
 }
