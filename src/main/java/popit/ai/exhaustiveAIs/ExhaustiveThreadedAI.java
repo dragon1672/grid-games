@@ -10,7 +10,11 @@ import popit.game.BlockColor;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.*;
+import java.util.Set;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
 /**
@@ -62,7 +66,7 @@ public class ExhaustiveThreadedAI extends AI {
 
     @Override
     public List<IntVector2> getMoves(ReadOnlyBoard<BlockColor> originalBoard) {
-        ExecutorService executorService = Executors.newSingleThreadExecutor();
+        ExecutorService executorService = Executors.newFixedThreadPool(10);
         List<Future<TaskResult>> pendingTasks = new ArrayList<>();
 
         Optional<MovePossibility> bestMove = Optional.empty();
@@ -77,17 +81,17 @@ public class ExhaustiveThreadedAI extends AI {
             //noinspection ResultOfMethodCallIgnored
             pendingTasks.parallelStream().map(this::getFuture).findFirst(); // wait till something is resolved
 
-            List<Future<TaskResult>> completedTasks = pendingTasks.stream().filter(Future::isDone).collect(Collectors.toList());
+            Set<Future<TaskResult>> completedTasks = pendingTasks.stream().filter(Future::isDone).collect(Collectors.toSet());
             pendingTasks.removeAll(completedTasks);
 
             bestMove = getBestMove(bestMove, completedTasks.stream().map(this::getFuture).map(task -> task.bestMove).reduce(ExhaustiveThreadedAI::getBestMove).orElse(Optional.empty()));
 
             try {
-                Optional<MovePossibility> currentBestMove = bestMove;
                 for (Future<TaskResult> taskResult : completedTasks) {
-                    pendingTasks.addAll(executorService.invokeAll(taskResult.get().newMoves.stream()
-                            .map(move -> (Callable<TaskResult>) () -> processMove(move, currentBestMove))
-                            .collect(Collectors.toList())));
+                    for (MovePossibility move : taskResult.get().newMoves) {
+                        Optional<MovePossibility> currentBestMove = bestMove;
+                        pendingTasks.add(executorService.submit(() -> processMove(move, currentBestMove)));
+                    }
                 }
             } catch (InterruptedException | ExecutionException e) {
                 e.printStackTrace();
