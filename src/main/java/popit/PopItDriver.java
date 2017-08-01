@@ -5,8 +5,8 @@ import common.gui.BoardGui;
 import common.utils.AsciiBoard;
 import common.utils.Flogger;
 import common.utils.IntVector2;
-import popit.ai.ExhaustiveAINoRecursive;
 import popit.ai.PopItAi;
+import popit.ai.exhaustiveAIs.ExhaustiveThreadedAI;
 import popit.game.BlockColor;
 import popit.game.PopItGame;
 
@@ -103,8 +103,9 @@ public class PopItDriver {
         //ai = new FirstPathNonRecursive(gui);
         //ai = new RecursiveBoardHeuristic(gui);
         //ai = new RecursiveFirstPath(gui);
-        //ai = new ExhaustiveAI(gui);
-        ai = new ExhaustiveAINoRecursive(gui);
+        //ai = new ExhaustiveRecursiveAI(gui);
+        //ai = new ExhaustiveIterativeAI(gui);
+        ai = new ExhaustiveThreadedAI(gui);
 
         // Run Simulation
         runAi(ai, game, gui);
