@@ -20,9 +20,9 @@ public class LightsOutDriver {
 
     private static Color cell2Color(LightsOutCell lightsOutCell) {
         switch (lightsOutCell) {
-            case ON:
+            case TRUE:
                 return Color.YELLOW;
-            case OFF:
+            case FALSE:
                 return Color.BLACK;
         }
         throw new IllegalArgumentException("wat");
@@ -54,7 +54,7 @@ public class LightsOutDriver {
         BoardGui<LightsOutCell> gui = BoardGui.createColorBoard(LightsOutDriver::cell2Color);
 
         // Create Game board
-        LightsOutGame game = LightsOutGame.createGame(4, 4, true);
+        LightsOutGame game = LightsOutGame.createGame(5, 5, true);
 
         LightsOutAI ai;
         ai = new BillyTheBruteForceLightsOutAI(gui);

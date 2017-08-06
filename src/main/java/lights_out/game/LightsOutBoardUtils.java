@@ -15,7 +15,7 @@ public class LightsOutBoardUtils {
                 .map(pos::add)
                 .filter(board::validPos)
                 .forEach(cellToToggle -> {
-                    LightsOutCell cellToSet = board.get(cellToToggle) == LightsOutCell.ON ? LightsOutCell.OFF : LightsOutCell.ON;
+                    LightsOutCell cellToSet = board.get(cellToToggle) == LightsOutCell.TRUE ? LightsOutCell.FALSE : LightsOutCell.TRUE;
                     board.set(cellToSet, cellToToggle);
                 });
     }
