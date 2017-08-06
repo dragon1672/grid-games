@@ -70,7 +70,10 @@ public class PopItDriver {
     private static void runAi(PopItAi ai, PopItGame game, BoardGui<BlockColor> gui) throws InterruptedException {
         logger.atInfo().log("Staring PopIt Game");
 
+        long startTime = System.currentTimeMillis();
         List<IntVector2> moves = ai.getMoves(game.getBoard());
+        long endTime = System.currentTimeMillis();
+        logger.atInfo().log("Getting moves took %d millis", endTime - startTime);
         for (IntVector2 move : moves) {
             long newPoints = game.popAt(move);
             logger.atInfo().log("move: %s, new points: %s, current score: %s\nboard\n%s", move, newPoints, game.getScore(), AsciiBoard.boardToString(game.getBoard()));

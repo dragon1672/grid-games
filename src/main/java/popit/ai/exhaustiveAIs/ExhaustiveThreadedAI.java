@@ -1,6 +1,5 @@
 package popit.ai.exhaustiveAIs;
 
-import com.google.common.collect.ImmutableList;
 import common.board.ReadOnlyBoard;
 import common.gui.BoardGui;
 import common.utils.IntVector2;
@@ -10,9 +9,11 @@ import popit.game.BlockColor;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
-import java.util.concurrent.*;
-import java.util.stream.Collectors;
+import java.util.concurrent.CompletionService;
+import java.util.concurrent.ExecutorCompletionService;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Explores all possible outcomes and returns the best solutions
@@ -20,6 +21,24 @@ import java.util.stream.Collectors;
  */
 public class ExhaustiveThreadedAI extends AI {
     private final BoardGui<BlockColor> gui;
+
+    private final Object bestMoveLock = new Object();
+    private Optional<MovePossibility> bestMove = Optional.empty();
+    private CompletionService<Boolean> completionService =
+            new ExecutorCompletionService<>(new ThreadPoolExecutor(6, 6,
+                    0L, TimeUnit.MILLISECONDS,
+                    new BlockingStack<>()));
+    //new ExecutorCompletionService<>(Executors.newFixedThreadPool(6));
+    private final AtomicInteger pendingTasks = new AtomicInteger();
+
+    private void updateBestMove(Optional<MovePossibility> newMove) {
+        // Double check locking ok in this instance since we are dealing with fully formed objects.
+        if (bestMove.map(move -> move.score).orElse(0L) < newMove.map(move -> move.score).orElse(0L)) {
+            synchronized (bestMoveLock) {
+                bestMove = bestMove.map(move -> move.score).orElse(0L) < newMove.map(move -> move.score).orElse(0L) ? newMove : bestMove;
+            }
+        }
+    }
 
     public ExhaustiveThreadedAI(BoardGui<BlockColor> gui) {
         this.gui = gui;
@@ -38,90 +57,40 @@ public class ExhaustiveThreadedAI extends AI {
         moves.add(movePossibility.moveToMake);
     }
 
-    private TaskResult processMove(MovePossibility move, Optional<MovePossibility> currentBestMove) {
-        gui.updateBoard(move.boardInstance);
+    private boolean processMove(MovePossibility move) {
+        long bestGameScore = bestMove.map(m -> m.score).orElse(0L);
+        if (move.maxPossibleScore + move.score > bestGameScore) {
+            gui.updateBoard(move.boardInstance);
 
-        long bestGameScore = currentBestMove.map(m -> m.score).orElse(0L);
-
-        ImmutableList.Builder<MovePossibility> generatedMoves = ImmutableList.builder();
-
-        Optional<MovePossibility> bestGame = Optional.empty();
-
-        if (move.isComplete() || AI.unWinnable(move.boardInstance)) {
-            if (move.isComplete() && move.score > bestGameScore) {
-                bestGame = Optional.of(move);
+            if (move.isComplete() || AI.unWinnable(move.boardInstance)) {
+                updateBestMove(Optional.of(move));
+            } else {
+                getAllPossibleMoves(move.boardInstance).stream()
+                        .map(pos -> new MovePossibility(move, pos))
+                        .filter(newMove -> newMove.maxPossibleScore + newMove.score > bestGameScore)
+                        .peek(newMove -> pendingTasks.incrementAndGet())
+                        .forEach(newMove -> completionService.submit(() -> processMove(newMove)));
             }
-        } else {
-            getAllPossibleMoves(move.boardInstance).stream()
-                    .map(pos -> new MovePossibility(move, pos))
-                    .filter(newMove -> newMove.maxPossibleScore + newMove.score > bestGameScore)
-                    .forEach(generatedMoves::add);
         }
-
-        return new TaskResult(bestGame, generatedMoves.build());
+        pendingTasks.decrementAndGet();
+        return true;
     }
 
     @Override
     public List<IntVector2> getMoves(ReadOnlyBoard<BlockColor> originalBoard) {
         try {
-            //ExecutorService executorService = Executors.newFixedThreadPool(10);
-            CompletionService<TaskResult> completionService =
-                    new ExecutorCompletionService<>(Executors.newFixedThreadPool(10));
-            List<Future<TaskResult>> pendingTasks = new ArrayList<>();
+            pendingTasks.set(0);
+            getAllPossibleMoves(originalBoard).stream()
+                    .map(move -> new MovePossibility(originalBoard, move))
+                    .forEach(this::processMove);
 
-            Optional<MovePossibility> bestMove = Optional.empty();
-
-            pendingTasks.add(completionService.submit(() -> new TaskResult(Optional.empty(),
-                    getAllPossibleMoves(originalBoard).stream()
-                            .map(move -> new MovePossibility(originalBoard, move))
-                            .collect(Collectors.toList())
-            )));
-
-            while (!pendingTasks.isEmpty()) {
-
-                completionService.take();// wait for a task to complete
-
-                Set<Future<TaskResult>> completedTasks = pendingTasks.stream().filter(Future::isDone).collect(Collectors.toSet());
-                pendingTasks.removeAll(completedTasks);
-
-                bestMove = getBestMove(bestMove, completedTasks.stream().map(this::getFuture).map(task -> task.bestMove).reduce(ExhaustiveThreadedAI::getBestMove).orElse(Optional.empty()));
-
-                for (Future<TaskResult> taskResult : completedTasks) {
-                    for (MovePossibility move : taskResult.get().newMoves) {
-                        Optional<MovePossibility> currentBestMove = bestMove;
-                        pendingTasks.add(completionService.submit(() -> processMove(move, currentBestMove)));
-                    }
-                }
-
+            while (pendingTasks.get() > 0) {
+                Thread.sleep(1000);
             }
             return extractMoves(bestMove.orElseThrow(() -> new IllegalArgumentException("board not solvable")));
-        } catch (InterruptedException | ExecutionException e) {
+        } catch (InterruptedException e) {
             e.printStackTrace();
             throw new RuntimeException(e);
         }
-    }
-
-    private static Optional<MovePossibility> getBestMove(Optional<MovePossibility> a, Optional<MovePossibility> b) {
-        return a.map(move -> move.score).orElse(0L) > b.map(move -> move.score).orElse(0L) ? a : b;
-    }
-
-    private <T> T getFuture(Future<T> future) {
-        try {
-            return future.get();
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-            throw new RuntimeException(e);
-        }
-    }
-
-    private static class TaskResult {
-        final Optional<MovePossibility> bestMove;
-        final List<MovePossibility> newMoves;
-
-        private TaskResult(Optional<MovePossibility> bestMove, List<MovePossibility> newMoves) {
-            this.bestMove = bestMove;
-            this.newMoves = newMoves;
-        }
-
     }
 }
