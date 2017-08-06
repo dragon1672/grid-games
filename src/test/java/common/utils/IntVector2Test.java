@@ -25,6 +25,14 @@ public class IntVector2Test {
     }
 
     @Test
+    public void testSub() {
+        IntVector2 a = IntVector2.of(1, 2);
+        IntVector2 b = IntVector2.of(4, 5);
+
+        Assert.assertEquals(IntVector2.of(-3, -3), a.sub(b));
+    }
+
+    @Test
     public void testThatAddIsImmutable() {
         IntVector2 original = IntVector2.of(12, 34);
         original.add(IntVector2.of(56, 78));
