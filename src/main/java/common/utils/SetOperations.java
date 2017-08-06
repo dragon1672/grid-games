@@ -52,6 +52,22 @@ public class SetOperations {
     /**
      * Calculates the power set by "incrementing" a binary array like it was a binary number to determine every possible combination.
      *
+     * Taking a 4 byte example
+     * 0000 = {}
+     * 0001 = {4}
+     * 0010 = {3}
+     * 0011 = {3,4}
+     * 0100 = {2}
+     * 0101 = {2,4}
+     * 0111 = {2,3,4}
+     * 1000 = {1}
+     * 1001 = {1,4}
+     * 1010 = {1,3}
+     * 1011 = {1,3,4}
+     * 1100 = {1,2}
+     * 1101 = {1,2,4}
+     * 1111 = {1,2,3,4}
+     *
      * @param originalSet set to determine power set of
      */
     static <T> Set<Set<T>> powerSet_bitSet(Set<T> originalSet) {
