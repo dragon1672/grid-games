@@ -1,5 +1,6 @@
 package common.utils;
 
+import com.google.common.collect.ImmutableSet;
 import common.board.ReadOnlyBoard;
 import common.board.SimulatedBoard;
 
@@ -43,6 +44,10 @@ public class BoardUtils {
                 .mapToObj(x -> IntStream.range(0, board.getHeight())
                         .mapToObj(y -> IntVector2.of(x, y)))
                 .flatMap(stream -> stream);
+    }
+
+    public static <T> Set<IntVector2> boardPositions(ReadOnlyBoard<T> board) {
+        return ImmutableSet.copyOf(boardPositionsAsStream(board).collect(Collectors.toSet()));
     }
 
     public static <T> boolean isUniformColor(ReadOnlyBoard<T> board) {
