@@ -2,7 +2,6 @@ package popit;
 
 import com.google.common.collect.ImmutableBiMap;
 import common.board.Board;
-import common.board.BoardLoaders;
 import common.board.ReadOnlyBoard;
 import common.gui.BoardGui;
 import common.utils.AsciiBoard;
@@ -14,7 +13,6 @@ import popit.game.BlockColor;
 import popit.game.PopItGame;
 
 import java.awt.*;
-import java.io.IOException;
 import java.util.List;
 
 /**
@@ -52,20 +50,6 @@ public class PopItDriver {
             .put('I', BlockColor.INDIGO)
             .put(' ', BlockColor.WHITES_INVALID)
             .build();
-
-    private static final ImmutableBiMap<Integer, BlockColor> rgb2Block = ImmutableBiMap.<Integer, BlockColor>builder()
-            .put(-696218, BlockColor.RED)
-            .put(-13260140, BlockColor.GREEN)
-            .put(-7569813, BlockColor.BROWN)
-            .put(-5741590, BlockColor.PURPLE)
-            .put(-11236113, BlockColor.INDIGO)
-            .put(-677581, BlockColor.YELLOW)
-            .build();
-
-    private static Board<BlockColor> getBoardFromImage() throws IOException {
-        String imagePath = "TODO";
-        return BoardLoaders.generateFromImage(imagePath, 10, 10, rgb -> rgb2Block.getOrDefault(rgb, BlockColor.WHITES_INVALID));
-    }
 
     private static Board<BlockColor> getStaticBoard() {
         String boardStr = "" +
