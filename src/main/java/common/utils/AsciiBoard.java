@@ -13,7 +13,7 @@ public class AsciiBoard {
         return boardToString(gameBoard, cell -> cell != null ? cell.toString().charAt(0) : ' ');
     }
 
-    public static <T> String boardToString(ReadOnlyBoard<T> gameBoard, Function<T, Character> cellToChar) {
+    private static <T> String boardToString(ReadOnlyBoard<T> gameBoard, Function<T, Character> cellToChar) {
         StringBuilder sb = new StringBuilder((gameBoard.getWidth() + 1) * gameBoard.getHeight());
         for (int y = 0; y < gameBoard.getHeight(); y++) {
             for (int x = 0; x < gameBoard.getWidth(); x++) {
