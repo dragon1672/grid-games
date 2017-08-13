@@ -1,42 +1,43 @@
 package common.utils;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class IntVector2Test {
+import static com.google.common.truth.Truth.assertThat;
+
+class IntVector2Test {
     @Test
-    public void testCreation() {
+    void testCreation() {
         IntVector2 vector = IntVector2.of(1, 2);
-        Assert.assertEquals(1, vector.x);
-        Assert.assertEquals(2, vector.y);
+        assertThat(vector.x).isEqualTo(1);
+        assertThat(vector.y).isEqualTo(2);
     }
 
     @Test
-    public void testEquals() {
-        Assert.assertEquals(IntVector2.of(12, 34), IntVector2.of(12, 34));
+    void testEquals() {
+        assertThat(IntVector2.of(12, 34)).isEqualTo(IntVector2.of(12, 34));
     }
 
     @Test
-    public void testAdd() {
+    void testAdd() {
         IntVector2 a = IntVector2.of(1, 2);
         IntVector2 b = IntVector2.of(4, 5);
 
-        Assert.assertEquals(IntVector2.of(5, 7), a.add(b));
+        assertThat(a.add(b)).isEqualTo(IntVector2.of(5, 7));
     }
 
     @Test
-    public void testSub() {
+    void testSub() {
         IntVector2 a = IntVector2.of(1, 2);
         IntVector2 b = IntVector2.of(4, 5);
 
-        Assert.assertEquals(IntVector2.of(-3, -3), a.sub(b));
+        assertThat(a.sub(b)).isEqualTo(IntVector2.of(-3, -3));
     }
 
     @Test
-    public void testThatAddIsImmutable() {
+    void testThatAddIsImmutable() {
         IntVector2 original = IntVector2.of(12, 34);
         original.add(IntVector2.of(56, 78));
 
-        Assert.assertEquals(IntVector2.of(12, 34), original);
+        assertThat(original).isEqualTo(IntVector2.of(12, 34));
     }
 }

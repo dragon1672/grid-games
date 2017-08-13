@@ -2,19 +2,18 @@ package common.utils;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static org.junit.Assert.fail;
+import static com.google.common.truth.Truth.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class SetOperationsTest {
+class SetOperationsTest {
     private static <T> void assertEqualPowerSets(Set<Set<T>> output, Set<Set<T>> expected) {
         Set<Set<T>> toCheck = new HashSet<>(output);
         Set<Set<T>> missing = new HashSet<>();
@@ -24,16 +23,8 @@ public class SetOperationsTest {
                 missing.add(expectedSet);
             }
         }
-        StringBuilder errorMessages = new StringBuilder();
-        if (!missing.isEmpty()) {
-            String asStr = missing.stream().map(collection -> Arrays.toString(missing.toArray())).collect(Collectors.joining(", \n\t"));
-            errorMessages.append(String.format("Missing Elements: {\n\t%s\n}\n", asStr));
-        }
-        if (!toCheck.isEmpty()) {
-            String asStr = toCheck.stream().map(collection -> Arrays.toString(missing.toArray())).collect(Collectors.joining(", \n\t"));
-            errorMessages.append(String.format("Extra elements: {\n\t%s\n}\n", asStr));
-        }
-        Assert.assertTrue(errorMessages.toString(), missing.isEmpty() && toCheck.isEmpty());
+        assertThat(missing).named("missing elements").isEmpty();
+        assertThat(toCheck).named("extra elements").isEmpty();
     }
 
     private static <T> void testPowerSetStream(Function<Set<T>, Stream<Set<T>>> function, Set<T> input) {
@@ -49,7 +40,7 @@ public class SetOperationsTest {
     }
 
     @Test
-    public void testMyPowerEquals() throws Exception {
+    void testMyPowerEquals() throws Exception {
         assertEqualPowerSets(
                 ImmutableSet.of(
                         ImmutableSet.of(1),
@@ -73,28 +64,23 @@ public class SetOperationsTest {
     }
 
     @Test
-    public void testMyPowerEquals_missingElement() throws Exception {
-        try {
-            assertEqualPowerSets(
-                    ImmutableSet.of(
-                            ImmutableSet.of(1),
-                            ImmutableSet.of(1, 2)
-                    ),
-                    ImmutableSet.of(
-                            ImmutableSet.of(1),
-                            ImmutableSet.of(1, 2),
-                            ImmutableSet.of(1, 2, 3)
-                    )
-            );
-            fail();
-        } catch (AssertionError ignored) {
-        }
+    void testMyPowerEquals_missingElement() throws Exception {
+        assertThrows(AssertionError.class, () -> assertEqualPowerSets(
+                ImmutableSet.of(
+                        ImmutableSet.of(1),
+                        ImmutableSet.of(1, 2)
+                ),
+                ImmutableSet.of(
+                        ImmutableSet.of(1),
+                        ImmutableSet.of(1, 2),
+                        ImmutableSet.of(1, 2, 3)
+                )
+        ));
     }
 
     @Test
-    public void testMyPowerEquals_ExtraElement() throws Exception {
-        try {
-            assertEqualPowerSets(
+    void testMyPowerEquals_ExtraElement() throws Exception {
+        assertThrows(AssertionError.class, () -> assertEqualPowerSets(
                     ImmutableSet.of(
                             ImmutableSet.of(1),
                             ImmutableSet.of(1, 2),
@@ -104,109 +90,106 @@ public class SetOperationsTest {
                             ImmutableSet.of(1),
                             ImmutableSet.of(1, 2)
                     )
-            );
-            fail();
-        } catch (AssertionError ignored) {
-        }
+        ));
     }
 
     @Test
-    public void powerSet_Recursive_0() throws Exception {
+    void powerSet_Recursive_0() throws Exception {
         testPowerSet(SetOperations::powerSet_Recursive, ImmutableSet.of());
     }
 
     @Test
-    public void powerSet_Recursive_1() throws Exception {
+    void powerSet_Recursive_1() throws Exception {
         testPowerSet(SetOperations::powerSet_Recursive, ImmutableSet.of(1));
     }
 
     @Test
-    public void powerSet_Recursive_2() throws Exception {
+    void powerSet_Recursive_2() throws Exception {
         testPowerSet(SetOperations::powerSet_Recursive, ImmutableSet.of(1, 2));
     }
 
     @Test
-    public void powerSet_Recursive_3() throws Exception {
+    void powerSet_Recursive_3() throws Exception {
         testPowerSet(SetOperations::powerSet_Recursive, ImmutableSet.of(1, 2, 3));
     }
 
     @Test
-    public void powerSet_Recursive_4() throws Exception {
+    void powerSet_Recursive_4() throws Exception {
         testPowerSet(SetOperations::powerSet_Recursive, ImmutableSet.of(1, 2, 3, 4));
     }
 
     @Test
-    public void powerSet_iterative_0() throws Exception {
+    void powerSet_iterative_0() throws Exception {
         testPowerSet(SetOperations::powerSet_iterative, ImmutableSet.of());
     }
 
     @Test
-    public void powerSet_iterative_1() throws Exception {
+    void powerSet_iterative_1() throws Exception {
         testPowerSet(SetOperations::powerSet_iterative, ImmutableSet.of(1));
     }
 
     @Test
-    public void powerSet_iterative_2() throws Exception {
+    void powerSet_iterative_2() throws Exception {
         testPowerSet(SetOperations::powerSet_iterative, ImmutableSet.of(1, 2));
     }
 
     @Test
-    public void powerSet_iterative_3() throws Exception {
+    void powerSet_iterative_3() throws Exception {
         testPowerSet(SetOperations::powerSet_iterative, ImmutableSet.of(1, 2, 3));
     }
 
     @Test
-    public void powerSet_iterative_4() throws Exception {
+    void powerSet_iterative_4() throws Exception {
         testPowerSet(SetOperations::powerSet_iterative, ImmutableSet.of(1, 2, 3, 4));
     }
 
     @Test
-    public void powerSet_bitSet_0() throws Exception {
+    void powerSet_bitSet_0() throws Exception {
         testPowerSet(SetOperations::powerSet_bitSet, ImmutableSet.of());
     }
 
     @Test
-    public void powerSet_bitSet_1() throws Exception {
+    void powerSet_bitSet_1() throws Exception {
         testPowerSet(SetOperations::powerSet_bitSet, ImmutableSet.of(1));
     }
 
     @Test
-    public void powerSet_bitSet_2() throws Exception {
+    void powerSet_bitSet_2() throws Exception {
         testPowerSet(SetOperations::powerSet_bitSet, ImmutableSet.of(1, 2));
     }
 
     @Test
-    public void powerSet_bitSet_3() throws Exception {
+    void powerSet_bitSet_3() throws Exception {
         testPowerSet(SetOperations::powerSet_bitSet, ImmutableSet.of(1, 2, 3));
     }
 
     @Test
-    public void powerSet_bitSet_4() throws Exception {
+    void powerSet_bitSet_4() throws Exception {
         testPowerSet(SetOperations::powerSet_bitSet, ImmutableSet.of(1, 2, 3, 4));
     }
 
     @Test
-    public void stream_powerSet_bitSet_0() throws Exception {
+    void stream_powerSet_bitSet_0() throws Exception {
         testPowerSetStream(SetOperations::stream_powerSet_bitSet, ImmutableSet.of());
     }
 
     @Test
-    public void stream_powerSet_bitSet_1() throws Exception {
+    void stream_powerSet_bitSet_1() throws Exception {
         testPowerSetStream(SetOperations::stream_powerSet_bitSet, ImmutableSet.of(1));
     }
 
     @Test
-    public void stream_powerSet_bitSet_2() throws Exception {
+    void stream_powerSet_bitSet_2() throws Exception {
         testPowerSetStream(SetOperations::stream_powerSet_bitSet, ImmutableSet.of(1, 2));
     }
 
     @Test
-    public void stream_powerSet_bitSet_3() throws Exception {
+    void stream_powerSet_bitSet_3() throws Exception {
         testPowerSetStream(SetOperations::stream_powerSet_bitSet, ImmutableSet.of(1, 2, 3));
     }
 
     @Test
-    public void stream_powerSet_bitSet_4() throws Exception {
+    void stream_powerSet_bitSet_4() throws Exception {
         testPowerSetStream(SetOperations::stream_powerSet_bitSet, ImmutableSet.of(1, 2, 3, 4));
     }
 }

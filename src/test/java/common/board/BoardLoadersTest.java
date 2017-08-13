@@ -2,13 +2,14 @@ package common.board;
 
 import com.google.common.collect.ImmutableBiMap;
 import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.function.Function;
 
-import static org.junit.Assert.fail;
+import static com.google.common.truth.Truth.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class BoardLoadersTest {
+class BoardLoadersTest {
 
     private static final ImmutableBiMap<Integer, Character> RGB_2_BLOCK = ImmutableBiMap.<Integer, Character>builder()
             .put(-37518, 'R')
@@ -17,111 +18,105 @@ public class BoardLoadersTest {
             .build();
 
     @Test
-    public void generateFromString_simpleSquare() throws Exception {
+    void generateFromString_simpleSquare() throws Exception {
         Board<Character> board = BoardLoaders.generateFromString("" +
                 "ABC\n" +
                 "DEF\n" +
                 "GHI" +
                 "", Function.identity());
-        Assert.assertEquals(3, board.getWidth());
-        Assert.assertEquals(3, board.getHeight());
-        Assert.assertEquals('A', (char) board.get(0, 0));
-        Assert.assertEquals('B', (char) board.get(1, 0));
-        Assert.assertEquals('C', (char) board.get(2, 0));
-        Assert.assertEquals('D', (char) board.get(0, 1));
-        Assert.assertEquals('E', (char) board.get(1, 1));
-        Assert.assertEquals('F', (char) board.get(2, 1));
-        Assert.assertEquals('G', (char) board.get(0, 2));
-        Assert.assertEquals('H', (char) board.get(1, 2));
-        Assert.assertEquals('I', (char) board.get(2, 2));
+        assertThat(board.getWidth()).isEqualTo(3);
+        assertThat(board.getHeight()).isEqualTo(3);
+        assertThat(board.get(0, 0)).isEqualTo('A');
+        assertThat(board.get(1, 0)).isEqualTo('B');
+        assertThat(board.get(2, 0)).isEqualTo('C');
+        assertThat(board.get(0, 1)).isEqualTo('D');
+        assertThat(board.get(1, 1)).isEqualTo('E');
+        assertThat(board.get(2, 1)).isEqualTo('F');
+        assertThat(board.get(0, 2)).isEqualTo('G');
+        assertThat(board.get(1, 2)).isEqualTo('H');
+        assertThat(board.get(2, 2)).isEqualTo('I');
     }
 
     @Test
-    public void generateFromString_simpleSquareWithTrailingLineReturn() throws Exception {
+    void generateFromString_simpleSquareWithTrailingLineReturn() throws Exception {
         Board<Character> board = BoardLoaders.generateFromString("" +
                 "ABC\n" +
                 "DEF\n" +
                 "GHI\n" +
                 "", Function.identity());
-        Assert.assertEquals(3, board.getWidth());
-        Assert.assertEquals(3, board.getHeight());
-        Assert.assertEquals('A', (char) board.get(0, 0));
-        Assert.assertEquals('B', (char) board.get(1, 0));
-        Assert.assertEquals('C', (char) board.get(2, 0));
-        Assert.assertEquals('D', (char) board.get(0, 1));
-        Assert.assertEquals('E', (char) board.get(1, 1));
-        Assert.assertEquals('F', (char) board.get(2, 1));
-        Assert.assertEquals('G', (char) board.get(0, 2));
-        Assert.assertEquals('H', (char) board.get(1, 2));
-        Assert.assertEquals('I', (char) board.get(2, 2));
+        assertThat(board.getWidth()).isEqualTo(3);
+        assertThat(board.getHeight()).isEqualTo(3);
+        assertThat(board.get(0, 0)).isEqualTo('A');
+        assertThat(board.get(1, 0)).isEqualTo('B');
+        assertThat(board.get(2, 0)).isEqualTo('C');
+        assertThat(board.get(0, 1)).isEqualTo('D');
+        assertThat(board.get(1, 1)).isEqualTo('E');
+        assertThat(board.get(2, 1)).isEqualTo('F');
+        assertThat(board.get(0, 2)).isEqualTo('G');
+        assertThat(board.get(1, 2)).isEqualTo('H');
+        assertThat(board.get(2, 2)).isEqualTo('I');
     }
 
     @Test
-    public void generateFromString_SimpleRectangle() throws Exception {
+    void generateFromString_SimpleRectangle() throws Exception {
         Board<Character> board = BoardLoaders.generateFromString("" +
                 "ABC\n" +
                 "DEF" +
                 "", Function.identity());
-        Assert.assertEquals(3, board.getWidth());
-        Assert.assertEquals(2, board.getHeight());
-        Assert.assertEquals('A', (char) board.get(0, 0));
-        Assert.assertEquals('B', (char) board.get(1, 0));
-        Assert.assertEquals('C', (char) board.get(2, 0));
-        Assert.assertEquals('D', (char) board.get(0, 1));
-        Assert.assertEquals('E', (char) board.get(1, 1));
-        Assert.assertEquals('F', (char) board.get(2, 1));
+        assertThat(board.getWidth()).isEqualTo(3);
+        assertThat(board.getHeight()).isEqualTo(2);
+        assertThat(board.get(0, 0)).isEqualTo('A');
+        assertThat(board.get(1, 0)).isEqualTo('B');
+        assertThat(board.get(2, 0)).isEqualTo('C');
+        assertThat(board.get(0, 1)).isEqualTo('D');
+        assertThat(board.get(1, 1)).isEqualTo('E');
+        assertThat(board.get(2, 1)).isEqualTo('F');
     }
 
     @Test
-    public void generateFromString_InvalidInput_inconsistentRows() throws Exception {
-        try {
+    void generateFromString_InvalidInput_inconsistentRows() throws Exception {
+        assertThrows(IllegalArgumentException.class, () ->
             BoardLoaders.generateFromString("" +
                     "ABC\n" +
                     "DEF000\n" +
                     "HIG" +
-                    "", Function.identity());
-            fail("inconsistent rows (extra chars) expected to throw exception");
-        } catch (IllegalArgumentException ignored) {
-        }
+                    "", Function.identity()));
 
-        try {
+        assertThrows(IllegalArgumentException.class, () ->
             BoardLoaders.generateFromString("" +
                     "ABC\n" +
                     "\n" +
                     "HIG" +
-                    "", Function.identity());
-            fail("inconsistent rows (empty row) expected to throw exception");
-        } catch (IllegalArgumentException ignored) {
-        }
+                    "", Function.identity()));
     }
 
     @Test
-    public void generateFromImage_square() throws Exception {
+    void generateFromImage_square() throws Exception {
         ReadOnlyBoard<Character> board = BoardLoaders.generateFromImage("src/test/java/common/board/board_square.PNG", 3, 3, RGB_2_BLOCK::get);
         Assert.assertEquals(3, board.getWidth());
         Assert.assertEquals(3, board.getHeight());
-        Assert.assertEquals('R', (char) board.get(0, 0));
-        Assert.assertEquals('G', (char) board.get(1, 0));
-        Assert.assertEquals('G', (char) board.get(2, 0));
-        Assert.assertEquals('Y', (char) board.get(0, 1));
-        Assert.assertEquals('R', (char) board.get(1, 1));
-        Assert.assertEquals('G', (char) board.get(2, 1));
-        Assert.assertEquals('R', (char) board.get(0, 2));
-        Assert.assertEquals('R', (char) board.get(1, 2));
-        Assert.assertEquals('R', (char) board.get(2, 2));
+        assertThat(board.get(0, 0)).isEqualTo('R');
+        assertThat(board.get(1, 0)).isEqualTo('G');
+        assertThat(board.get(2, 0)).isEqualTo('G');
+        assertThat(board.get(0, 1)).isEqualTo('Y');
+        assertThat(board.get(1, 1)).isEqualTo('R');
+        assertThat(board.get(2, 1)).isEqualTo('G');
+        assertThat(board.get(0, 2)).isEqualTo('R');
+        assertThat(board.get(1, 2)).isEqualTo('R');
+        assertThat(board.get(2, 2)).isEqualTo('R');
     }
 
     @Test
-    public void generateFromImage_rect() throws Exception {
+    void generateFromImage_rect() throws Exception {
         ReadOnlyBoard<Character> board = BoardLoaders.generateFromImage("src/test/java/common/board/board_rect.PNG", 3, 2, RGB_2_BLOCK::get);
         Assert.assertEquals(3, board.getWidth());
         Assert.assertEquals(2, board.getHeight());
-        Assert.assertEquals('G', (char) board.get(0, 0));
-        Assert.assertEquals('G', (char) board.get(1, 0));
-        Assert.assertEquals('Y', (char) board.get(2, 0));
-        Assert.assertEquals('R', (char) board.get(0, 1));
-        Assert.assertEquals('G', (char) board.get(1, 1));
-        Assert.assertEquals('Y', (char) board.get(2, 1));
+        assertThat(board.get(0, 0)).isEqualTo('G');
+        assertThat(board.get(1, 0)).isEqualTo('G');
+        assertThat(board.get(2, 0)).isEqualTo('Y');
+        assertThat(board.get(0, 1)).isEqualTo('R');
+        assertThat(board.get(1, 1)).isEqualTo('G');
+        assertThat(board.get(2, 1)).isEqualTo('Y');
 
     }
 
