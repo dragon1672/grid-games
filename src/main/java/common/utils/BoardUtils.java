@@ -1,6 +1,5 @@
 package common.utils;
 
-import com.google.common.collect.ImmutableSet;
 import common.board.ReadOnlyBoard;
 import common.board.SimulatedBoard;
 
@@ -8,9 +7,11 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
+
+import static com.google.common.collect.ImmutableMap.toImmutableMap;
+import static com.google.common.collect.ImmutableSet.toImmutableSet;
 
 public class BoardUtils {
     public static <T> Set<IntVector2> getConnectedCells(ReadOnlyBoard<T> board, IntVector2 startingPos) {
@@ -47,7 +48,7 @@ public class BoardUtils {
     }
 
     public static <T> Set<IntVector2> boardPositions(ReadOnlyBoard<T> board) {
-        return ImmutableSet.copyOf(boardPositionsAsStream(board).collect(Collectors.toSet()));
+        return boardPositionsAsStream(board).collect(toImmutableSet());
     }
 
     public static <T> boolean isUniformColor(ReadOnlyBoard<T> board) {
@@ -61,14 +62,14 @@ public class BoardUtils {
         return true;
     }
 
-    public static <T> Set<T> cellsOnBoard(ReadOnlyBoard<T> board) {
-        return boardPositionsAsStream(board).map(board::get).distinct().collect(Collectors.toSet());
+    public static <T> Set<T> cellTypesOnBoard(ReadOnlyBoard<T> board) {
+        return boardPositionsAsStream(board).map(board::get).distinct().collect(toImmutableSet());
     }
 
     public static <T> ReadOnlyBoard<T> replaceConnectedCells(ReadOnlyBoard<T> board, T cellToReplaceWith, IntVector2 position) {
         Set<IntVector2> connectedSquares = BoardUtils.getConnectedCells(board, position);
         Map<IntVector2, T> overrides = connectedSquares.stream()
-                .collect(Collectors.toMap(pos -> pos, pos -> cellToReplaceWith));
+                .collect(toImmutableMap(pos -> pos, pos -> cellToReplaceWith));
         return new SimulatedBoard<>(board, overrides);
     }
 }

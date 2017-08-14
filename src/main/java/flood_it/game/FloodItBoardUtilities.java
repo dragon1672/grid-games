@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
  */
 public class FloodItBoardUtilities {
     public static List<FloodColor> movesOnBoard(ReadOnlyBoard<FloodColor> board) {
-        return BoardUtils.cellsOnBoard(board).stream() // get the cells on the board
+        return BoardUtils.cellTypesOnBoard(board).stream() // get the cells on the board
                 .filter(cell -> cell != board.get(FloodIt.MOVE_POS)) // remove the currently selected color
                 .collect(Collectors.toList());
     }
