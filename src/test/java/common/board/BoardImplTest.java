@@ -65,7 +65,7 @@ class BoardImplTest {
         assertThat(board.get(0, 1)).isNull();
         assertThat(board.get(1, 1)).isNull();
 
-        board.set('A', 0, 0);
+        board.set('A', IntVector2.of(0, 0));
         board.set('B', 1, 0);
         board.set('C', 0, 1);
         board.set('D', 1, 1);
