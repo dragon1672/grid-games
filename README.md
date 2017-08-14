@@ -18,7 +18,7 @@ loop because it favors a fragmented board.
 
 When you every click toggles the block and the surrounding blocks
 
-STATUS: TODO
+STATUS: Brute force AI
 
 ## Minesweeper
 
@@ -50,3 +50,29 @@ https://youtu.be/bRS_RnodlTI
 Does not favor any moves and just tries any possibility it can
 
 https://youtu.be/gAUn8hRk9hc
+
+### Exhaustive AIs
+
+The goal of these AIs is to determine the best possible game. Each version
+takes a stab at doing this in a reasonable time.
+
+#### Exhaustive Recursive AI
+
+This one is pretty bad, it saves all the possible states and then picks the best one.
+
+This has never successfully solved a full board.
+
+#### Exhaustive Iterative AI
+
+This does a depth first search only saving the best resulting game. It will discard any
+moves that don't, or can't beat the current best game.
+
+On a full board, this took about 3 hours.
+
+#### Exhaustive Threaded AI
+
+This is an attempt to thread a depth first search that discards results if they cannot beat
+the best possible game. This has a performance boost for small games, but on a full board,
+the iterative AI still has better performance.
+
+Tests on a full board were stopped after 3 hours.
