@@ -6,6 +6,8 @@ import common.board.BoardImpl;
 import common.board.BoardLoaders;
 import org.junit.jupiter.api.Test;
 
+import java.util.Set;
+
 import static com.google.common.collect.ImmutableList.toImmutableList;
 import static com.google.common.truth.Truth.assertThat;
 
@@ -96,8 +98,39 @@ class BoardUtilsTest {
     }
 
     @Test
-    void cellsOnBoard() throws Exception {
+    void cellTypesOnBoard_oneByOne() throws Exception {
+        Set<Character> uniqueCells = BoardUtils.cellTypesOnBoard(BoardLoaders.generateFromString("A"));
+        assertThat(uniqueCells).containsExactly('A');
+    }
 
+    @Test
+    void cellTypesOnBoard_uniform() throws Exception {
+        Set<Character> uniqueCells = BoardUtils.cellTypesOnBoard(BoardLoaders.generateFromString("" +
+                "AAA\n" +
+                "AAA\n" +
+                "AAA" +
+                ""));
+        assertThat(uniqueCells).containsExactly('A');
+    }
+
+    @Test
+    void cellTypesOnBoard_allUnique() throws Exception {
+        Set<Character> uniqueCells = BoardUtils.cellTypesOnBoard(BoardLoaders.generateFromString("" +
+                "ABC\n" +
+                "DEF\n" +
+                "GHI" +
+                ""));
+        assertThat(uniqueCells).containsExactly('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I');
+    }
+
+    @Test
+    void cellTypesOnBoard_mixed() throws Exception {
+        Set<Character> uniqueCells = BoardUtils.cellTypesOnBoard(BoardLoaders.generateFromString("" +
+                "ABC\n" +
+                "CAB\n" +
+                "BCB" +
+                ""));
+        assertThat(uniqueCells).containsExactly('A', 'B', 'C');
     }
 
     @Test
