@@ -1,5 +1,6 @@
 package common.board;
 
+import common.utils.IntVector2;
 import org.junit.jupiter.api.Test;
 
 import static com.google.common.truth.Truth.assertThat;
@@ -28,17 +29,33 @@ class BoardImplTest {
 
     @Test
     void getOutOfBounds() {
-        Board<Character> board = BoardImpl.make(5, 10);
+        Board<Character> board = BoardImpl.make(5, 100);
         assertThrows(IllegalArgumentException.class, () -> board.get(10, 10));
-        assertThrows(IllegalArgumentException.class, () -> board.get(-1, 10));
     }
 
     @Test
     void getOutOfBounds_negative() {
-        Board<Character> board = BoardImpl.make(5, 10);
+        Board<Character> board = BoardImpl.make(5, 100);
         assertThrows(IllegalArgumentException.class, () -> board.get(-1, 10));
     }
 
+    @Test
+    void checkValidPos_valid() {
+        Board<Character> board = BoardImpl.make(5, 100);
+        assertThat(board.validPos(IntVector2.of(0, 0))).isTrue();
+    }
+
+    @Test
+    void checkValidPos_outOfBounds() {
+        Board<Character> board = BoardImpl.make(5, 100);
+        assertThat(board.validPos(IntVector2.of(10, 10))).isFalse();
+    }
+
+    @Test
+    void checkValidPos_negative() {
+        Board<Character> board = BoardImpl.make(5, 10);
+        assertThat(board.validPos(IntVector2.of(-1, -1))).isFalse();
+    }
 
     @Test
     void getAndSet() {

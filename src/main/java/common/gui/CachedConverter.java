@@ -8,7 +8,7 @@ public abstract class CachedConverter<A,B> implements Function<A, B> {
 
     private final Map<A,B> cache = new HashMap<>();
 
-    protected abstract B doConvert(A a);
+    abstract B doConvert(A a);
 
     @Override
     public B apply(A a) {

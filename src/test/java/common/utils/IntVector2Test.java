@@ -34,10 +34,32 @@ class IntVector2Test {
     }
 
     @Test
+    void testMul() {
+        IntVector2 a = IntVector2.of(1, 2);
+        float scale = 2;
+
+        assertThat(a.mul(scale)).isEqualTo(IntVector2.of(2, 4));
+    }
+
+    @Test
+    void testMulNegative() {
+        IntVector2 a = IntVector2.of(1, 2);
+        float scale = -2;
+
+        assertThat(a.mul(scale)).isEqualTo(IntVector2.of(-2, -4));
+    }
+
+    @Test
     void testThatAddIsImmutable() {
         IntVector2 original = IntVector2.of(12, 34);
         original.add(IntVector2.of(56, 78));
 
         assertThat(original).isEqualTo(IntVector2.of(12, 34));
+    }
+
+    @Test
+    void testToString() {
+        assertThat(IntVector2.of(42, 0).toString()).contains("42");
+        assertThat(IntVector2.of(0, 42).toString()).contains("42");
     }
 }

@@ -48,7 +48,7 @@ public class BoardLoaders {
      * @return builder pattern instance of same BoardGenerator called
      * @throws IOException if there are issues loading the image
      */
-    public static <T> Board<T> generateFromImage(String path, int width, int height, Function<Integer, T> rgbToCell) throws IOException {
+    static <T> Board<T> generateFromImage(String path, int width, int height, Function<Integer, T> rgbToCell) throws IOException {
         BufferedImage img = ImageIO.read(new File(path));
         int cellWidth = img.getWidth() / width;
         int cellHeight = img.getHeight() / height;
