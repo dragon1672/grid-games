@@ -14,6 +14,10 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * Extra Utilities for creating boards from various input
  */
 public class BoardLoaders {
+    public static Board<Character> generateFromString(String boardStr) {
+        return generateFromString(boardStr, Function.identity());
+    }
+
     public static <T> Board<T> generateFromString(String boardStr, Function<Character, T> char2Block) {
         String[] lines = boardStr.split("\\n");
         checkNotNull(boardStr);
