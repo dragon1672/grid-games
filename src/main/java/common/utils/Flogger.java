@@ -2,8 +2,7 @@ package common.utils;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.logging.*;
 
 /**
  * Log Wrapper to standardise printing messages
@@ -15,6 +14,8 @@ public class Flogger {
 
     private Flogger(Logger logger) {
         this.loggger = logger;
+        logger.setUseParentHandlers(false);
+        logger.addHandler(new DualConsoleHandler());
     }
 
     public static Flogger getInstance() {
@@ -25,6 +26,9 @@ public class Flogger {
         return getHandle(Level.INFO);
     }
 
+    public Handle atError() {
+        return getHandle(Level.SEVERE);
+    }
 
     private Map<Level, Handle> handleMap = new HashMap<>();
 
@@ -45,6 +49,22 @@ public class Flogger {
 
         public void log(String message, Object... args) {
             loggger.log(level, String.format(message, args));
+        }
+    }
+
+    private static class DualConsoleHandler extends StreamHandler {
+        private final StreamHandler stderrHandler = new ConsoleHandler();
+        private final StreamHandler stdoutHandler = new StreamHandler(System.out, new SimpleFormatter());
+
+        @Override
+        public void publish(LogRecord record) {
+            if (record.getLevel().intValue() <= Level.INFO.intValue()) {
+                stdoutHandler.publish(record);
+                stdoutHandler.flush();
+            } else {
+                stderrHandler.publish(record);
+                stderrHandler.flush();
+            }
         }
     }
 }
