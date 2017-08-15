@@ -70,6 +70,8 @@ public class MineSweeperDriver {
         if (game.hasLost()) {
             logger.atInfo().log("You lost");
         }
+        game.revealAll();
+        gui.updateBoard(game.getBoard());
     }
 
     public static void main(String... args) throws InterruptedException {
