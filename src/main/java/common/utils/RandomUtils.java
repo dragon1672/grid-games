@@ -1,5 +1,7 @@
 package common.utils;
 
+import com.google.common.annotations.VisibleForTesting;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -7,8 +9,8 @@ import java.util.Random;
 import static com.google.common.base.Preconditions.checkArgument;
 
 public class RandomUtils {
-
-    private static final Random rand = new Random();
+    @VisibleForTesting
+    static Random rand = new Random();
 
     private static <T> void swap(List<T> list, int left, int right) {
         T tmp = list.get(left);
@@ -17,7 +19,7 @@ public class RandomUtils {
     }
 
     public static <T> List<T> randomSubset(List<T> source, int count) {
-        checkArgument(count < source.size());
+        checkArgument(count <= source.size());
         List<T> mutableSource = new ArrayList<>(source);
         for (int i = 0; i < count; i++) {
             int randomIndex = rand.nextInt(mutableSource.size());
