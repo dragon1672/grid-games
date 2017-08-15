@@ -3,22 +3,24 @@ package minesweeper.game;
 import com.google.common.collect.ImmutableBiMap;
 
 public enum Cell {
-    N0(true),
-    N1(true),
-    N2(true),
-    N3(true),
-    N4(true),
-    N5(true),
-    N6(true),
-    N7(true),
-    N8(true),
-    BOMB(true),
-    EMPTY(false);
+    N0(true, 0),
+    N1(true, 1),
+    N2(true, 2),
+    N3(true, 3),
+    N4(true, 4),
+    N5(true, 5),
+    N6(true, 6),
+    N7(true, 7),
+    N8(true, 8),
+    BOMB(true, -1),
+    EMPTY(false, -1);
 
     public final boolean finalState;
+    public final int numAdjacentBombs;
 
-    Cell(boolean finalState) {
+    Cell(boolean finalState, int numAdjacentBombs) {
         this.finalState = finalState;
+        this.numAdjacentBombs = numAdjacentBombs;
     }
 
     public static final ImmutableBiMap<Cell, Integer> cellNumMap = ImmutableBiMap.<Cell, Integer>builder()

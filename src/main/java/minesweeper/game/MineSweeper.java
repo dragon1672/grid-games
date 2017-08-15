@@ -21,7 +21,7 @@ import static com.google.common.collect.ImmutableList.toImmutableList;
  */
 public class MineSweeper implements Game<Cell> {
 
-    private final ImmutableList<IntVector2> DIRECTIONS = ImmutableList.of(
+    public static final ImmutableList<IntVector2> DIRECTIONS = ImmutableList.of(
             IntVector2.of(1, 1),
             IntVector2.of(1, 0),
             IntVector2.of(1, -1),

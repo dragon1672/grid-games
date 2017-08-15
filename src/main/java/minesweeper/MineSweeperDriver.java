@@ -6,7 +6,7 @@ import common.utils.AsciiBoard;
 import common.utils.Flogger;
 import common.utils.IntVector2;
 import minesweeper.ai.MineSweeperAI;
-import minesweeper.ai.RandomMineSweeperAi;
+import minesweeper.ai.SafeBetAI;
 import minesweeper.game.Cell;
 import minesweeper.game.MineSweeper;
 
@@ -82,7 +82,8 @@ public class MineSweeperDriver {
 
         // Set an MineSweeperAI
         MineSweeperAI ai;
-        ai = new RandomMineSweeperAi();
+        //ai = new RandomMineSweeperAi();
+        ai = new SafeBetAI();
 
         runAi(ai,game);
 
