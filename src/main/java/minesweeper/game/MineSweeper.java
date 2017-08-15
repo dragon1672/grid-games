@@ -138,13 +138,8 @@ public class MineSweeper implements Game<Cell> {
         return false;
     }
 
-    public void revealAll() {
-        List<IntVector2> possibleMoves = MineSweeperBoardUtils.getMoves(board);
-        while (!possibleMoves.isEmpty()) {
-            IntVector2 positionToReveal = possibleMoves.get(0);
-            revealLocation(positionToReveal);
-            possibleMoves = MineSweeperBoardUtils.getMoves(board);
-        }
+    public void revealAllBombs() {
+        minePositions.forEach(this::revealLocation);
     }
 
     @Override

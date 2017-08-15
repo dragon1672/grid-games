@@ -1,5 +1,6 @@
 package common.utils;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -15,8 +16,9 @@ public class RandomUtils {
         list.set(right, tmp);
     }
 
-    public static <T> List<T> randomSubset(List<T> mutableSource, int count) {
-        checkArgument(count < mutableSource.size());
+    public static <T> List<T> randomSubset(List<T> source, int count) {
+        checkArgument(count < source.size());
+        List<T> mutableSource = new ArrayList<>(source);
         for (int i = 0; i < count; i++) {
             int randomIndex = rand.nextInt(mutableSource.size());
             swap(mutableSource, i, randomIndex);

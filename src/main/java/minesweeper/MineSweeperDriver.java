@@ -70,7 +70,7 @@ public class MineSweeperDriver {
         if (game.hasLost()) {
             logger.atInfo().log("You lost");
         }
-        game.revealAll();
+        game.revealAllBombs();
         gui.updateBoard(game.getBoard());
     }
 
