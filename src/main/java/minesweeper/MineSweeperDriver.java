@@ -69,9 +69,9 @@ public class MineSweeperDriver {
         }
         if (game.hasLost()) {
             logger.atInfo().log("You lost");
+            game.revealAllBombs();
+            gui.updateBoard(game.getBoard());
         }
-        game.revealAllBombs();
-        gui.updateBoard(game.getBoard());
     }
 
     public static void main(String... args) throws InterruptedException {

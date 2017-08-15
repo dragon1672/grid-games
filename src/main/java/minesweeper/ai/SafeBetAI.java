@@ -51,14 +51,14 @@ public class SafeBetAI implements MineSweeperAI {
         double e1WorstCase = Math.max(e1Max, e1Average);
         double e2WorstCase = Math.max(e2Max, e2Average);
 
-        return (int) (e1WorstCase - e2WorstCase);
+        return Double.compare(e1WorstCase, e2WorstCase);
     }
 
     @Override
     public IntVector2 getMove(ReadOnlyBoard<Cell> board) {
         Multimap<IntVector2, Float> probabilities = generateBombProbibilities(board);
         Optional<IntVector2> bestMove = probabilities.asMap().entrySet().stream()
-                .max(this::findMax)
+                .min(this::findMax)
                 .map(Map.Entry::getKey);
         IntVector2 randomMove = RandomUtils.randomFromList(MineSweeperBoardUtils.getMoves(board));
         return bestMove.orElse(randomMove);
