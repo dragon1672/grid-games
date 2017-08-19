@@ -23,7 +23,7 @@ public class TribbleDriver {
 
     private static Image loadImage(String fileName) {
         try {
-            String fullPath = String.format("src/main/java/minesweeper/assets/%s", fileName);
+            String fullPath = String.format("src/main/java/tribble_defense/assets/%s", fileName);
             return ImageIO.read(new File(fullPath));
         } catch (IOException e) {
             e.printStackTrace();
@@ -39,10 +39,7 @@ public class TribbleDriver {
             .put(Cell.N3, loadImage("3.PNG"))
             .put(Cell.N4, loadImage("4.PNG"))
             .put(Cell.N5, loadImage("5.PNG"))
-            .put(Cell.N6, loadImage("6.PNG"))
-            .put(Cell.N7, loadImage("7.PNG"))
-            .put(Cell.N8, loadImage("8.PNG"))
-            .put(Cell.BLOCKED, loadImage("BOMB.PNG"))
+            .put(Cell.BLOCKED, loadImage("BLOCKER.png"))
             .build();
 
     private static void runAi(TribbleAI ai, TribbleDefense game) throws InterruptedException {
