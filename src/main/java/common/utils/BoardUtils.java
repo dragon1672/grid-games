@@ -1,5 +1,6 @@
 package common.utils;
 
+import com.google.common.annotations.VisibleForTesting;
 import common.board.ReadOnlyBoard;
 import common.board.SimulatedBoard;
 
@@ -10,10 +11,16 @@ import java.util.Set;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.collect.ImmutableMap.toImmutableMap;
 import static com.google.common.collect.ImmutableSet.toImmutableSet;
 
 public class BoardUtils {
+
+    @VisibleForTesting
+    BoardUtils() {
+    }
+
     public static <T> Set<IntVector2> getConnectedCells(ReadOnlyBoard<T> board, IntVector2 startingPos) {
         Set<IntVector2> matchedSquares = new HashSet<>();
         getConnectedCells(board, startingPos.x, startingPos.y, matchedSquares);
@@ -56,6 +63,7 @@ public class BoardUtils {
     }
 
     public static <T> boolean isUniformColor(ReadOnlyBoard<T> board) {
+        checkArgument(board.validPos(0, 0));
         return isUniformColor(board, board.get(0, 0));
     }
 

@@ -40,6 +40,11 @@ class SetOperationsTest {
     }
 
     @Test
+    void dumbCoverageTest() {
+        new SetOperations();
+    }
+
+    @Test
     void testMyPowerEquals() throws Exception {
         assertEqualPowerSets(
                 ImmutableSet.of(
@@ -191,5 +196,39 @@ class SetOperationsTest {
     @Test
     void stream_powerSet_bitSet_4() throws Exception {
         testPowerSetStream(SetOperations::stream_powerSet_bitSet, ImmutableSet.of(1, 2, 3, 4));
+    }
+
+    @Test
+    void stream_powerSet_0() throws Exception {
+        testPowerSetStream(SetOperations::powerSet, ImmutableSet.of());
+    }
+
+    @Test
+    void stream_powerSet_1() throws Exception {
+        testPowerSetStream(SetOperations::powerSet, ImmutableSet.of(1));
+    }
+
+    @Test
+    void stream_powerSet_2() throws Exception {
+        testPowerSetStream(SetOperations::powerSet, ImmutableSet.of(1, 2));
+    }
+
+    @Test
+    void stream_powerSet_3() throws Exception {
+        testPowerSetStream(SetOperations::powerSet, ImmutableSet.of(1, 2, 3));
+    }
+
+    @Test
+    void stream_powerSet_4() throws Exception {
+        testPowerSetStream(SetOperations::powerSet, ImmutableSet.of(1, 2, 3, 4));
+    }
+
+    @Test
+    void elementIsIn() {
+        assertThat(SetOperations.elementIsIn(1, 2, 3).test(1)).isTrue();
+        assertThat(SetOperations.elementIsIn(1, 2, 3).test(2)).isTrue();
+        assertThat(SetOperations.elementIsIn(1, 2, 3).test(3)).isTrue();
+        assertThat(SetOperations.elementIsIn(1, 2, 3).test(4)).isFalse();
+        assertThat(SetOperations.elementIsIn(1, 2, 3).test(-1)).isFalse();
     }
 }

@@ -1,9 +1,11 @@
 package common.utils;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import common.board.Board;
 import common.board.BoardImpl;
 import common.board.BoardLoaders;
+import common.board.ReadOnlyBoard;
 import org.junit.jupiter.api.Test;
 
 import java.util.Set;
@@ -17,6 +19,11 @@ class BoardUtilsTest {
         Board<Character> board = BoardLoaders.generateFromString(boardStr);
         Set<IntVector2> resultingConnectedCells = BoardUtils.getConnectedCells(board, startingPos);
         assertThat(resultingConnectedCells).containsExactlyElementsIn(expectedPositions);
+    }
+
+    @Test
+    void dumbCoverageTest() {
+        new BoardUtils();
     }
 
     @Test
@@ -188,6 +195,23 @@ class BoardUtilsTest {
     }
 
     @Test
+    void boardPositionsAsRandomStream() throws Exception {
+        Board<Character> board = BoardImpl.make(4, 4);
+
+        ImmutableList<IntVector2> positionsInOrder = BoardUtils.boardPositionsAsStream(board).collect(toImmutableList());
+        ImmutableList<IntVector2> outputOne = BoardUtils.boardPositionsAsRandomStream(board).collect(toImmutableList());
+        ImmutableList<IntVector2> outputTwo = BoardUtils.boardPositionsAsRandomStream(board).collect(toImmutableList());
+
+        // outputs should contain all the board positions
+        assertThat(outputOne).containsExactlyElementsIn(positionsInOrder);
+        assertThat(outputTwo).containsExactlyElementsIn(positionsInOrder);
+
+        assertThat(outputOne).isNotEqualTo(positionsInOrder);
+        assertThat(outputTwo).isNotEqualTo(positionsInOrder);
+        assertThat(outputOne).isNotEqualTo(outputTwo);
+    }
+
+    @Test
     void boardPositions_oneByOne() throws Exception {
         Board<Character> board = BoardImpl.make(1, 1);
 
@@ -235,6 +259,17 @@ class BoardUtilsTest {
     }
 
     @Test
+    void isUniformColor_false() throws Exception {
+        Board<Character> board = BoardLoaders.generateFromString("" +
+                "ABC\n" +
+                "DEF\n" +
+                "GEH\n" +
+                "");
+
+        assertThat(BoardUtils.isUniformColor(board)).isFalse();
+    }
+
+    @Test
     void cellTypesOnBoard_oneByOne() throws Exception {
         Set<Character> uniqueCells = BoardUtils.cellTypesOnBoard(BoardLoaders.generateFromString("A"));
         assertThat(uniqueCells).containsExactly('A');
@@ -268,5 +303,22 @@ class BoardUtilsTest {
                 "BCB" +
                 ""));
         assertThat(uniqueCells).containsExactly('A', 'B', 'C');
+    }
+
+    @Test
+    void replaceConnectedCells() throws Exception {
+        ReadOnlyBoard<Character> inputBoard = BoardLoaders.generateFromString("" +
+                "MMM\n" +
+                "M-M\n" +
+                "MMM");
+
+        ReadOnlyBoard<Character> expectedBoard = BoardLoaders.generateFromString("" +
+                "YYY\n" +
+                "Y-Y\n" +
+                "YYY");
+
+        ReadOnlyBoard<Character> output = BoardUtils.replaceConnectedCells(inputBoard, 'Y', IntVector2.of(0, 0));
+
+        assertThat(output).isEqualTo(expectedBoard);
     }
 }

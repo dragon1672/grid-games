@@ -1,5 +1,6 @@
 package common.utils;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
@@ -11,6 +12,10 @@ import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 public class SetOperations {
+
+    @VisibleForTesting
+    SetOperations() {
+    }
 
     /**
      * Calculates power set with recursion
@@ -143,6 +148,7 @@ public class SetOperations {
         return stream_powerSet_bitSet(originalSet);
     }
 
+    @SafeVarargs
     public static <T> Predicate<T> elementIsIn(T... possibleTargets) {
         return ImmutableSet.copyOf(possibleTargets)::contains;
     }

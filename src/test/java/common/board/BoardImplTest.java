@@ -112,6 +112,25 @@ class BoardImplTest {
     }
 
     @Test
+    void equals_nullBoards() {
+        Board<Character> a = BoardImpl.make(10, 10);
+        Board<Character> b = BoardImpl.make(10, 10);
+
+        assertThat(a != b).named("object reference should be different").isTrue();
+        assertThat(a).isEqualTo(b);
+        assertThat(a.hashCode()).isEqualTo(b.hashCode());
+    }
+
+    @Test
+    void equalsDifferentBoardSizes() {
+        Board<Character> a = BoardImpl.make(1, 1);
+        Board<Character> b = BoardImpl.make(2, 1);
+
+        assertThat(a != b).named("object reference should be different").isTrue();
+        assertThat(a).isNotEqualTo(b);
+    }
+
+    @Test
     void testToString() {
         Board<Character> originalBoard = BoardImpl.make(1, 1);
         originalBoard.set('&', 0, 0);

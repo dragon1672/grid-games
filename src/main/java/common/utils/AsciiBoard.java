@@ -1,6 +1,7 @@
 package common.utils;
 
 
+import com.google.common.annotations.VisibleForTesting;
 import common.board.ReadOnlyBoard;
 
 import java.util.function.Function;
@@ -9,6 +10,11 @@ import java.util.function.Function;
  * Helper to convert block types
  */
 public class AsciiBoard {
+
+    @VisibleForTesting
+    AsciiBoard() {
+    }
+
     public static <T> String boardToString(ReadOnlyBoard<T> gameBoard) {
         return boardToString(gameBoard, cell -> cell != null ? cell.toString().charAt(0) : ' ');
     }

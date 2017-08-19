@@ -18,6 +18,11 @@ class RandomUtilsTest {
     }
 
     @Test
+    void dumbCoverageTest() {
+        new RandomUtils();
+    }
+
+    @Test
     void randomSubset_sublistToLarge() {
         assertThrows(IllegalArgumentException.class, () -> RandomUtils.randomSubset(ImmutableList.of(), 100));
     }

@@ -1,5 +1,7 @@
 package common.board;
 
+import com.google.common.annotations.VisibleForTesting;
+
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -14,6 +16,11 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * Extra Utilities for creating boards from various input
  */
 public class BoardLoaders {
+
+    @VisibleForTesting
+    BoardLoaders() {
+    }
+
     public static Board<Character> generateFromString(String boardStr) {
         return generateFromString(boardStr, Function.identity());
     }
