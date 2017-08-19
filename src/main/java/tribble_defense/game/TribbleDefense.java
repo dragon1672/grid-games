@@ -8,6 +8,7 @@ import common.interfaces.Game;
 import common.utils.BoardUtils;
 import common.utils.IntVector2;
 
+import java.util.Comparator;
 import java.util.Optional;
 import java.util.Set;
 
@@ -17,15 +18,28 @@ import static com.google.common.base.Preconditions.checkArgument;
  * TribbleDefense game
  */
 public class TribbleDefense implements Game<Cell> {
-
+    // TODO bunch of bugs
+    // TODO generated blockers need to not create closed areas
+    // TODO Allow hard coding initial board
+    // TODO options with generating board
+    // TODO Allow different max cell
     private Board<Cell> board;
 
-    private TribbleDefense(int width, int height, int numObsticals) {
-        checkArgument(numObsticals >= 0, "Cannot have negative obstacles");
-        checkArgument(numObsticals < width * height, "cannot have more obstacles than grid spaces");
+    public static Cell getMoveCellForBoard(ReadOnlyBoard<Cell> board) {
+        Cell minCellOnBoard = BoardUtils.boardPositionsAsStream(board).map(board::get).min(Comparator.comparingInt(c -> c.value)).orElse(Cell.N0);
+        return Cell.cellNumMap.inverse().getOrDefault(minCellOnBoard.value - 1, Cell.N0);
+    }
+
+    public Cell getMoveCell() {
+        return getMoveCellForBoard(board);
+    }
+
+    private TribbleDefense(int width, int height, int nubObstacles) {
+        checkArgument(nubObstacles >= 0, "Cannot have negative obstacles");
+        checkArgument(nubObstacles < width * height, "cannot have more obstacles than grid spaces");
         board = BoardImpl.make(width, height);
         clearBoard();
-        addObstacles(numObsticals);
+        addObstacles(nubObstacles);
         // TODO make this more legit
         board.set(Cell.N1, 0, 0);
     }
@@ -53,7 +67,7 @@ public class TribbleDefense implements Game<Cell> {
         checkArgument(!isComplete(), "game complete, no further moves allowed");
         checkArgument(board.get(pos) == Cell.N0, "Can only place on empty square");
 
-        board.set(Cell.N1, pos);
+        board.set(getMoveCell(), pos);
         upgrade(pos);
     }
 
