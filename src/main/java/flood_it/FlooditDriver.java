@@ -70,7 +70,7 @@ public class FlooditDriver {
 
         // Set an TribbleAI
         FlooditAI ai;
-        //ai = new RandomMineSweeperAi();
+        //ai = new RandomFlooditAi();
         //ai = new MaxPerimeterFlooditAi();
         ai = new MaxAreaFlooditAi();
 

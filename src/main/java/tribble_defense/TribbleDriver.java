@@ -5,7 +5,7 @@ import common.gui.BoardGui;
 import common.utils.AsciiBoard;
 import common.utils.Flogger;
 import common.utils.IntVector2;
-import tribble_defense.ai.RandomMineSweeperAi;
+import tribble_defense.ai.RandomTribbleAi;
 import tribble_defense.ai.TribbleAI;
 import tribble_defense.game.Cell;
 import tribble_defense.game.TribbleDefense;
@@ -69,8 +69,7 @@ public class TribbleDriver {
 
         // Set an TribbleAI
         TribbleAI ai;
-        //ai = new RandomMineSweeperAi();
-        ai = new RandomMineSweeperAi();
+        ai = new RandomTribbleAi();
 
         runAi(ai, game);
 

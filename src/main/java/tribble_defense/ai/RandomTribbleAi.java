@@ -5,7 +5,7 @@ import common.utils.BoardUtils;
 import common.utils.IntVector2;
 import tribble_defense.game.Cell;
 
-public class RandomMineSweeperAi implements TribbleAI {
+public class RandomTribbleAi implements TribbleAI {
 
     @Override
     public IntVector2 getMove(ReadOnlyBoard<Cell> board) {
