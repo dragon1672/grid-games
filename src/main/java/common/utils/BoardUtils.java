@@ -40,6 +40,10 @@ public class BoardUtils {
         }
     }
 
+    public static <T> Stream<IntVector2> boardPositionsAsRandomStream(ReadOnlyBoard<T> board) {
+        return RandomUtils.randomizeStream(boardPositionsAsStream(board));
+    }
+
     public static <T> Stream<IntVector2> boardPositionsAsStream(ReadOnlyBoard<T> board) {
         return IntStream.range(0, board.getWidth())
                 .mapToObj(x -> IntStream.range(0, board.getHeight())
@@ -52,9 +56,13 @@ public class BoardUtils {
     }
 
     public static <T> boolean isUniformColor(ReadOnlyBoard<T> board) {
+        return isUniformColor(board, board.get(0, 0));
+    }
+
+    public static <T> boolean isUniformColor(ReadOnlyBoard<T> board, T color) {
         for (int x = 0; x < board.getWidth(); x++) {
             for (int y = 0; y < board.getHeight(); y++) {
-                if (board.get(x, y) != board.get(0, 0)) {
+                if (board.get(x, y) != color) {
                     return false;
                 }
             }

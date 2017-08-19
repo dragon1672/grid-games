@@ -5,6 +5,7 @@ import com.google.common.annotations.VisibleForTesting;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Stream;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
@@ -30,5 +31,9 @@ public class RandomUtils {
 
     public static <T> T randomFromList(List<T> list) {
         return list.get(rand.nextInt(list.size()));
+    }
+
+    public static <T> Stream<T> randomizeStream(Stream<T> stream) {
+        return stream.sorted(new RandomComparator<>(rand));
     }
 }
