@@ -1,12 +1,12 @@
 package tribble_defense.game;
 
-import com.google.common.collect.ImmutableSet;
 import common.board.Board;
 import common.board.BoardImpl;
 import common.board.ReadOnlyBoard;
 import common.interfaces.Game;
 import common.utils.BoardUtils;
 import common.utils.IntVector2;
+import common.utils.SetOperations;
 
 import java.util.Comparator;
 import java.util.Optional;
@@ -18,10 +18,6 @@ import static com.google.common.base.Preconditions.checkArgument;
  * TribbleDefense game
  */
 public class TribbleDefense implements Game<Cell> {
-    // TODO bunch of bugs
-    // TODO generated blockers need to not create closed areas
-    // TODO Allow hard coding initial board
-    // TODO options with generating board
     // TODO Allow different max cell
     private Board<Cell> board;
 
@@ -40,7 +36,8 @@ public class TribbleDefense implements Game<Cell> {
         board = BoardImpl.make(width, height);
         clearBoard();
         addObstacles(nubObstacles);
-        // TODO make this more legit
+        // TODO Allow hard coding initial board
+        // TODO options with generating board, num of entities to place, range of entites placed
         board.set(Cell.N1, 0, 0);
     }
 
@@ -53,6 +50,7 @@ public class TribbleDefense implements Game<Cell> {
     }
 
     private void addObstacles(int num) {
+        // TODO generated blockers need to not create closed areas
         BoardUtils.boardPositionsAsRandomStream(board)
                 .filter(pos -> board.get(pos) == Cell.N0)
                 .limit(num)
@@ -71,11 +69,15 @@ public class TribbleDefense implements Game<Cell> {
         upgrade(pos);
     }
 
-    private Optional<Cell> getNextProgression(Cell current) {
+    /**
+     * Returns the level of cell if it exists. If the max cell is passed in, will return Optional.empty()
+     */
+    public Optional<Cell> getNextProgression(Cell current) {
         return Optional.ofNullable(Cell.cellNumMap.inverse().get(current.value + 1));
     }
 
     private void upgrade(IntVector2 pos) {
+        // TODO export this logic into a common utils so an AI can simulate this
         while (true) {
             Optional<Cell> nextCell = getNextProgression(board.get(pos));
             Set<IntVector2> positionsToUpgrade = BoardUtils.getConnectedCells(board, pos);
@@ -95,7 +97,9 @@ public class TribbleDefense implements Game<Cell> {
 
     @Override
     public boolean isComplete() {
-        return BoardUtils.boardPositionsAsStream(board).map(board::get).allMatch(cell -> ImmutableSet.of(Cell.N0, Cell.BLOCKED).contains(cell));
+        return BoardUtils.boardPositionsAsStream(board)
+                .map(board::get)
+                .allMatch(SetOperations.elementIsIn(Cell.N0, Cell.BLOCKED));
     }
 
     @Override

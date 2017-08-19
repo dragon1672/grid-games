@@ -7,6 +7,7 @@ import java.util.BitSet;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.Stack;
+import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 public class SetOperations {
@@ -140,5 +141,9 @@ public class SetOperations {
      */
     public static <T> Stream<Set<T>> powerSet(Set<T> originalSet) {
         return stream_powerSet_bitSet(originalSet);
+    }
+
+    public static <T> Predicate<T> elementIsIn(T... possibleTargets) {
+        return ImmutableSet.copyOf(possibleTargets)::contains;
     }
 }
