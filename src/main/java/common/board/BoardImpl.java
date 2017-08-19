@@ -1,9 +1,5 @@
 package common.board;
 
-import common.utils.AsciiBoard;
-
-import java.util.Arrays;
-
 import static com.google.common.base.Preconditions.checkArgument;
 
 /**
@@ -65,22 +61,17 @@ public class BoardImpl<T> implements Board<T> {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        BoardImpl board1 = (BoardImpl) o;
-
-        return Arrays.deepEquals(board, board1.board);
+    public boolean equals(Object that) {
+        return this == that || that instanceof ReadOnlyBoard && isEqualTo((ReadOnlyBoard<?>) that);
     }
 
     @Override
     public int hashCode() {
-        return Arrays.deepHashCode(board);
+        return getHashCode();
     }
 
     @Override
     public String toString() {
-        return AsciiBoard.boardToString(this);
+        return asString();
     }
 }

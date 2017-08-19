@@ -32,4 +32,19 @@ public class SimulatedBoard<T> implements ReadOnlyBoard<T> {
     public int getHeight() {
         return baseBoard.getHeight();
     }
+
+    @Override
+    public boolean equals(Object that) {
+        return this == that || that instanceof ReadOnlyBoard && isEqualTo((ReadOnlyBoard<?>) that);
+    }
+
+    @Override
+    public int hashCode() {
+        return getHashCode();
+    }
+
+    @Override
+    public String toString() {
+        return asString();
+    }
 }
