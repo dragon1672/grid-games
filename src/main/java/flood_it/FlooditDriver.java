@@ -44,14 +44,14 @@ public class FlooditDriver {
 
     private static void runAi(FlooditAI ai, FloodIt game) throws InterruptedException {
         BoardGui<FloodColor> gui = BoardGui.createColorBoard(FlooditDriver::cell2Color);
-        logger.atInfo().log("Staring MineSweeperAI moves");
+        logger.atInfo().log("Staring Floodit AI moves");
 
         int moves = 0;
 
         while (!game.isComplete()) {
             moves++;
             FloodColor move = ai.getMove(game);
-            logger.atInfo().log("MineSweeperAI picked color %s", move);
+            logger.atInfo().log("Floodit AI picked color %s", move);
             game.floodColor(move);
             gui.updateBoard(game.getBoard());
             logger.atInfo().log("board state\n%s", AsciiBoard.boardToString(game.getBoard()));
@@ -68,7 +68,7 @@ public class FlooditDriver {
         // Create Game board
         FloodIt game = FloodIt.startGame(10, 10);
 
-        // Set an MineSweeperAI
+        // Set an TribbleAI
         FlooditAI ai;
         //ai = new RandomMineSweeperAi();
         //ai = new MaxPerimeterFlooditAi();

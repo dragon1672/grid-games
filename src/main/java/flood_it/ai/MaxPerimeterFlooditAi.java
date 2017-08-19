@@ -11,7 +11,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * MineSweeperAI will try and maximize perimeter with each move
+ * FlooditAi will try and maximize perimeter with each move
  */
 public class MaxPerimeterFlooditAi implements FlooditAI {
 

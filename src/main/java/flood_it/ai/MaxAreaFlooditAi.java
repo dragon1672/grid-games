@@ -12,7 +12,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
- * MineSweeperAI will try take any move that will convert the most blocks
+ * FlooditAi will try take any move that will convert the most blocks
  */
 public class MaxAreaFlooditAi implements FlooditAI {
 
