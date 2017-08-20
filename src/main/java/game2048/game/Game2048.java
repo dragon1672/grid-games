@@ -49,6 +49,24 @@ public class Game2048 implements Game<Cell> {
     public void move(Move move) {
         //TODO make this not sloppy
 
+        //TODO fix bug where combinations should happen from the bottom up
+        /*
+            taking
+
+            1
+            111
+            1 1
+
+            Moving down should result in
+
+            1
+            212
+
+            This implementation could create
+
+            2   // the top merged before the bottom :(
+            112
+         */
         final boolean[] somethingMoved = new boolean[1];
         do {
             somethingMoved[0] = false;
