@@ -15,22 +15,26 @@ import static com.google.common.truth.Truth.assertThat;
 
 class SafeBetAITest {
 
-    private static BiMap<Cell, Character> charMap = ImmutableBiMap.<Cell, Character>builder()
-            .put(Cell.N0, Cell.N0.toString().charAt(0))
-            .put(Cell.N1, Cell.N1.toString().charAt(0))
-            .put(Cell.N2, Cell.N2.toString().charAt(0))
-            .put(Cell.N3, Cell.N3.toString().charAt(0))
-            .put(Cell.N4, Cell.N4.toString().charAt(0))
-            .put(Cell.N5, Cell.N5.toString().charAt(0))
-            .put(Cell.N6, Cell.N6.toString().charAt(0))
-            .put(Cell.N7, Cell.N7.toString().charAt(0))
-            .put(Cell.N8, Cell.N8.toString().charAt(0))
-            .put(Cell.BOMB, Cell.BOMB.toString().charAt(0))
-            .put(Cell.EMPTY, Cell.EMPTY.toString().charAt(0))
+    private static char cell2Char(Cell toConvert) {
+        return toConvert.toString().charAt(0);
+    }
+
+    private static BiMap<Character, Cell> charMap = ImmutableBiMap.<Character, Cell>builder()
+            .put(cell2Char(Cell.N0), Cell.N0)
+            .put(cell2Char(Cell.N1), Cell.N1)
+            .put(cell2Char(Cell.N2), Cell.N2)
+            .put(cell2Char(Cell.N3), Cell.N3)
+            .put(cell2Char(Cell.N4), Cell.N4)
+            .put(cell2Char(Cell.N5), Cell.N5)
+            .put(cell2Char(Cell.N6), Cell.N6)
+            .put(cell2Char(Cell.N7), Cell.N7)
+            .put(cell2Char(Cell.N8), Cell.N8)
+            .put(cell2Char(Cell.BOMB), Cell.BOMB)
+            .put(cell2Char(Cell.EMPTY), Cell.EMPTY)
             .build();
 
     private ReadOnlyBoard<Cell> getBoard(String boardStr) {
-        return BoardLoaders.generateFromString(boardStr, charMap.inverse()::get);
+        return BoardLoaders.generateFromString(boardStr, charMap::get);
     }
 
     @Test
@@ -55,11 +59,11 @@ class SafeBetAITest {
                 "E\n" +
                 "");
 
-        IntVector2 expected = IntVector2.of(0, 0);
+        List<IntVector2> expected = ImmutableList.of(IntVector2.of(0, 0));
 
-        IntVector2 result = new SafeBetAI().getMove(board);
+        List<IntVector2> result = new SafeBetAI().getMoves(board);
 
-        assertThat(result).isEqualTo(expected);
+        assertThat(result).containsExactlyElementsIn(expected);
     }
 
     @Test
@@ -70,11 +74,11 @@ class SafeBetAITest {
                 "000\n" +
                 "");
 
-        IntVector2 expected = IntVector2.of(1, 1);
+        List<IntVector2> expected = ImmutableList.of(IntVector2.of(1, 1));
 
-        IntVector2 result = new SafeBetAI().getMove(board);
+        List<IntVector2> result = new SafeBetAI().getMoves(board);
 
-        assertThat(result).isEqualTo(expected);
+        assertThat(result).containsExactlyElementsIn(expected);
     }
 
     @Test
@@ -101,6 +105,21 @@ class SafeBetAITest {
                 "");
 
         List<IntVector2> expected = ImmutableList.of(IntVector2.of(3, 1));
+
+        List<IntVector2> result = new SafeBetAI().getMoves(board);
+
+        assertThat(result).containsExactlyElementsIn(expected);
+    }
+
+    @Test
+    void getMove_largerNumbers() {
+        ReadOnlyBoard<Cell> board = getBoard("" +
+                "11211\n" +
+                "1E2EE\n" +
+                "11211\n" +
+                "");
+
+        List<IntVector2> expected = ImmutableList.of(IntVector2.of(4, 1));
 
         List<IntVector2> result = new SafeBetAI().getMoves(board);
 
