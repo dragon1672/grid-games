@@ -2,6 +2,7 @@ package tribble_defense;
 
 import com.google.common.collect.ImmutableMap;
 import common.gui.BoardGui;
+import common.interfaces.Runner;
 import common.utils.AsciiBoard;
 import common.utils.Flogger;
 import common.utils.IntVector2;
@@ -18,7 +19,7 @@ import java.io.IOException;
 /**
  * Online example: http://dragon1672.github.io/Tribble-Defense/source/index.html
  */
-public class TribbleDriver {
+public class TribbleDriver implements Runner<Cell> {
     private static final Flogger logger = Flogger.getInstance();
 
     private static Image loadImage(String fileName) {
@@ -42,8 +43,7 @@ public class TribbleDriver {
             .put(Cell.BLOCKED, loadImage("BLOCKER.png"))
             .build();
 
-    private static void runAi(TribbleAI ai, TribbleDefense game) throws InterruptedException {
-        BoardGui<Cell> gui = BoardGui.createImageBoard(cellMap::get);
+    private static void runAi(TribbleAI ai, TribbleDefense game, BoardGui<Cell> gui) throws InterruptedException {
         logger.atInfo().log("Staring TribbleAI moves");
 
         int moves = 0;
@@ -61,7 +61,13 @@ public class TribbleDriver {
         logger.atInfo().log("Game Complete after %d rounds", moves);
     }
 
-    public static void main(String... args) throws InterruptedException {
+    @Override
+    public BoardGui<Cell> getGui() {
+        return BoardGui.createImageBoard(cellMap::get);
+    }
+
+    @Override
+    public void run(BoardGui<Cell> gui) throws InterruptedException {
         logger.atInfo().log("Staring game");
 
         // Create Game board
@@ -71,8 +77,13 @@ public class TribbleDriver {
         TribbleAI ai;
         ai = new RandomTribbleAi();
 
-        runAi(ai, game);
+        runAi(ai, game, gui);
 
         logger.atInfo().log("Complete");
+    }
+
+    public static void main(String... args) throws InterruptedException {
+        TribbleDriver driver = new TribbleDriver();
+        driver.run(driver.getGui());
     }
 }

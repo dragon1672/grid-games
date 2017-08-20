@@ -5,11 +5,13 @@ import game2048.Driver2048;
 import lights_out.LightsOutDriver;
 import minesweeper.MineSweeperDriver;
 import popit.PopItDriver;
+import tribble_defense.TribbleDriver;
 
 public class RunEverything {
 
     private static <T> void runDriver(Runner<T> driver) {
         BoardGui<T> gui = driver.getGui();
+        //noinspection InfiniteLoopStatement
         while (true) {
             try {
                 driver.run(gui);
@@ -25,5 +27,6 @@ public class RunEverything {
         new Thread(() -> runDriver(new LightsOutDriver())).start();
         new Thread(() -> runDriver(new FlooditDriver())).start();
         new Thread(() -> runDriver(new PopItDriver())).start();
+        new Thread(() -> runDriver(new TribbleDriver())).start();
     }
 }
