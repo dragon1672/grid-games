@@ -29,6 +29,10 @@ public class RandomUtils {
         return mutableSource.subList(0, count);
     }
 
+    public static <T> T randomFromList(T[] list) {
+        return list[rand.nextInt(list.length)];
+    }
+
     public static <T> T randomFromList(List<T> list) {
         return list.get(rand.nextInt(list.size()));
     }
