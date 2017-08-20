@@ -47,7 +47,7 @@ public class Game2048 implements Game<Cell> {
     }
 
     public void move(Move move) {
-        //TODO make this not sloppy
+        //TODO make this not sloppy and export to utils
 
         //TODO fix bug where combinations should happen from the bottom up
         /*
