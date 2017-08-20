@@ -2,6 +2,7 @@ package game2048;
 
 import com.google.common.collect.ImmutableMap;
 import common.gui.BoardGui;
+import common.interfaces.Runner;
 import common.utils.AsciiBoard;
 import common.utils.Flogger;
 import game2048.ai.AI2048;
@@ -18,7 +19,7 @@ import java.io.IOException;
 /**
  * Online example: https://www.chiark.greenend.org.uk/~sgtatham/puzzles/js/mines.html
  */
-public class Driver2048 {
+public class Driver2048 implements Runner<Cell> {
     private static final Flogger logger = Flogger.getInstance();
 
     private static Image loadImage(String fileName) {
@@ -32,7 +33,7 @@ public class Driver2048 {
     }
 
     // Map each cell to a file
-    private static final ImmutableMap<Cell, Image> cellMap = ImmutableMap.<Cell, Image>builder()
+    public static final ImmutableMap<Cell, Image> cellMap = ImmutableMap.<Cell, Image>builder()
             .put(Cell.N0, loadImage("0.PNG"))
             .put(Cell.N1, loadImage("1.PNG"))
             .put(Cell.N2, loadImage("2.PNG"))
@@ -44,8 +45,7 @@ public class Driver2048 {
             .put(Cell.N8, loadImage("8.PNG"))
             .build();
 
-    private static void runAi(AI2048 ai, Game2048 game) throws InterruptedException {
-        BoardGui<Cell> gui = BoardGui.createImageBoard(cellMap::get);
+    private static void runAi(AI2048 ai, Game2048 game, BoardGui<Cell> gui) throws InterruptedException {
         logger.atInfo().log("Staring 2048 moves");
 
         int moves = 0;
@@ -64,19 +64,30 @@ public class Driver2048 {
 
     }
 
-    public static void main(String... args) throws InterruptedException {
+    @Override
+    public BoardGui<Cell> getGui() {
+        return BoardGui.createImageBoard(cellMap::get);
+    }
+
+    @Override
+    public void run(BoardGui<Cell> gui) throws InterruptedException {
         logger.atInfo().log("Staring game");
 
         // Create Game board
-        Game2048 game = Game2048.create(5, 5);
+        Game2048 game = Game2048.create(3, 3);
 
         // Set an MineSweeperAI
         AI2048 ai;
         //ai = new RandomMineSweeperAi();
         ai = new Random2048AI();
 
-        runAi(ai, game);
+        runAi(ai, game, gui);
 
         logger.atInfo().log("Complete");
+    }
+
+    public static void main(String... args) throws InterruptedException {
+        Driver2048 driver = new Driver2048();
+        driver.run(driver.getGui());
     }
 }

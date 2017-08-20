@@ -65,7 +65,7 @@ public class TribbleDriver {
         logger.atInfo().log("Staring game");
 
         // Create Game board
-        TribbleDefense game = TribbleDefense.create(10, 10, 15);
+        TribbleDefense game = TribbleDefense.create(5, 5, 5);
 
         // Set an TribbleAI
         TribbleAI ai;

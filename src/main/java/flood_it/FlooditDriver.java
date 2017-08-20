@@ -2,6 +2,7 @@ package flood_it;
 
 import com.google.common.collect.ImmutableList;
 import common.gui.BoardGui;
+import common.interfaces.Runner;
 import common.utils.AsciiBoard;
 import common.utils.Flogger;
 import flood_it.ai.FlooditAI;
@@ -17,7 +18,7 @@ import java.util.List;
 /**
  * Runner Class
  */
-public class FlooditDriver {
+public class FlooditDriver implements Runner<FloodColor> {
 
     private static final Flogger logger = Flogger.getInstance();
 
@@ -42,8 +43,7 @@ public class FlooditDriver {
         throw new IllegalArgumentException("wat");
     }
 
-    private static void runAi(FlooditAI ai, FloodIt game) throws InterruptedException {
-        BoardGui<FloodColor> gui = BoardGui.createColorBoard(FlooditDriver::cell2Color);
+    private static void runAi(FlooditAI ai, FloodIt game, BoardGui<FloodColor> gui) throws InterruptedException {
         logger.atInfo().log("Staring Floodit AI moves");
 
         int moves = 0;
@@ -61,8 +61,13 @@ public class FlooditDriver {
         logger.atInfo().log("Game Complete after %d rounds", moves);
     }
 
-    public static void main(String... args) throws InterruptedException {
+    @Override
+    public BoardGui<FloodColor> getGui() {
+        return BoardGui.createColorBoard(FlooditDriver::cell2Color);
+    }
 
+    @Override
+    public void run(BoardGui<FloodColor> gui) throws InterruptedException {
         logger.atInfo().log("Staring game");
 
         // Create Game board
@@ -75,9 +80,13 @@ public class FlooditDriver {
         ai = new MaxAreaFlooditAi();
 
         // Run Simulation
-        runAi(ai, game);
+        runAi(ai, game, gui);
 
         logger.atInfo().log("Complete");
+    }
 
+    public static void main(String... args) throws InterruptedException {
+        FlooditDriver driver = new FlooditDriver();
+        driver.run(driver.getGui());
     }
 }

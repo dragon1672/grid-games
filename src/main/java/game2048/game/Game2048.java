@@ -1,6 +1,5 @@
 package game2048.game;
 
-import com.google.common.collect.ImmutableSet;
 import common.board.Board;
 import common.board.BoardImpl;
 import common.board.ReadOnlyBoard;
@@ -9,6 +8,10 @@ import common.utils.BoardUtils;
 import common.utils.IntVector2;
 
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static com.google.common.collect.ImmutableSet.toImmutableSet;
 
 /**
  * 2048 game
@@ -92,8 +95,25 @@ public class Game2048 implements Game<Cell> {
         addRandomSquare(1);
     }
 
+    private boolean canMove(Move move) {
+        // TODO optimize this
+        Set<IntVector2> positions = BoardUtils.boardPositionsAsStream(board).collect(Collectors.toSet());
+        for (IntVector2 pos : positions) {
+            IntVector2 shiftedPos = pos.add(move.dir);
+            if (board.validPos(shiftedPos) && board.get(pos) != Cell.N0) {
+                Cell currentCell = board.get(pos);
+                if (board.get(shiftedPos) == Cell.N0) {
+                    return true;
+                } else if (board.get(shiftedPos) == currentCell) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     private Set<Move> getMoves() {
-        return ImmutableSet.copyOf(Move.values()); // TODO restrict based off actual moves
+        return Stream.of(Move.values()).filter(this::canMove).collect(toImmutableSet());
     }
 
     @Override

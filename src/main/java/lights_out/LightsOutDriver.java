@@ -1,6 +1,7 @@
 package lights_out;
 
 import common.gui.BoardGui;
+import common.interfaces.Runner;
 import common.utils.AsciiBoard;
 import common.utils.Flogger;
 import common.utils.IntVector2;
@@ -15,10 +16,10 @@ import java.util.Set;
 /**
  * Online example: https://www.chiark.greenend.org.uk/~sgtatham/puzzles/js/flood.html
  */
-public class LightsOutDriver {
+public class LightsOutDriver implements Runner<LightsOutCell> {
     private static final Flogger logger = Flogger.getInstance();
 
-    private static Color cell2Color(LightsOutCell lightsOutCell) {
+    public static Color cell2Color(LightsOutCell lightsOutCell) {
         switch (lightsOutCell) {
             case TRUE:
                 return Color.YELLOW;
@@ -48,10 +49,14 @@ public class LightsOutDriver {
         logger.atInfo().log("Game Complete");
     }
 
-    public static void main(String... args) throws InterruptedException {
-        logger.atInfo().log("Staring game");
+    @Override
+    public BoardGui<LightsOutCell> getGui() {
+        return BoardGui.createColorBoard(LightsOutDriver::cell2Color);
+    }
 
-        BoardGui<LightsOutCell> gui = BoardGui.createColorBoard(LightsOutDriver::cell2Color);
+    @Override
+    public void run(BoardGui<LightsOutCell> gui) throws InterruptedException {
+        logger.atInfo().log("Staring game");
 
         // Create Game board
         LightsOutGame game = LightsOutGame.createGame(5, 5, true);
@@ -63,6 +68,10 @@ public class LightsOutDriver {
         runAi(gui, ai, game);
 
         logger.atInfo().log("Complete");
+    }
 
+    public static void main(String... args) throws InterruptedException {
+        LightsOutDriver driver = new LightsOutDriver();
+        driver.run(driver.getGui());
     }
 }

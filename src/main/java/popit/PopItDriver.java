@@ -1,24 +1,30 @@
 package popit;
 
 import com.google.common.collect.ImmutableBiMap;
+import com.google.common.collect.ImmutableList;
 import common.board.Board;
+import common.board.BoardLoaders;
 import common.board.ReadOnlyBoard;
 import common.gui.BoardGui;
+import common.interfaces.Runner;
 import common.utils.AsciiBoard;
 import common.utils.Flogger;
 import common.utils.IntVector2;
+import common.utils.RandomUtils;
 import popit.ai.PopItAi;
-import popit.ai.exhaustiveAIs.ExhaustiveThreadedAI;
+import popit.ai.exhaustiveAIs.ExhaustiveIterativeAI;
 import popit.game.BlockColor;
 import popit.game.PopItGame;
 
 import java.awt.*;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 /**
  * Online Example: https://www.chiark.greenend.org.uk/~sgtatham/puzzles/js/samegame.html
  */
-public class PopItDriver {
+public class PopItDriver implements Runner<BlockColor> {
     private static final Flogger logger = Flogger.getInstance();
 
     private static Color cell2Color(BlockColor blockColor) {
@@ -76,7 +82,27 @@ public class PopItDriver {
                 "RGYGRYGGGY" +
                 "";
         //*/
-        return common.board.BoardLoaders.generateFromString(boardStr, ch -> char2Block.getOrDefault(ch, BlockColor.WHITES_INVALID));
+        return BoardLoaders.generateFromString(boardStr, ch -> char2Block.getOrDefault(ch, BlockColor.WHITES_INVALID));
+    }
+
+    private ReadOnlyBoard<BlockColor> getRandomBoard() {
+        List<String> possibleSquares = ImmutableList.of(
+                "" + BlockColor.RED.toString().charAt(0),
+                "" + BlockColor.GREEN.toString().charAt(0),
+                "" + BlockColor.BROWN.toString().charAt(0),
+                "" + BlockColor.PURPLE.toString().charAt(0),
+                "" + BlockColor.INDIGO.toString().charAt(0),
+                "" + BlockColor.YELLOW.toString().charAt(0)
+        );
+
+        int width = 5;
+        int height = 5;
+
+        String boardStr = IntStream.range(0, height).mapToObj(y ->
+                IntStream.range(0, width).mapToObj(value -> RandomUtils.randomFromList(possibleSquares))
+                        .collect(Collectors.joining()))
+                .collect(Collectors.joining("\n"));
+        return BoardLoaders.generateFromString(boardStr, ch -> char2Block.getOrDefault(ch, BlockColor.WHITES_INVALID));
     }
 
     private static void runAi(PopItAi ai, PopItGame game, BoardGui<BlockColor> gui) throws InterruptedException {
@@ -100,15 +126,19 @@ public class PopItDriver {
         }
     }
 
-    public static void main(String... args) throws InterruptedException {
+    @Override
+    public BoardGui<BlockColor> getGui() {
+        return BoardGui.createColorBoard(PopItDriver::cell2Color);
+    }
 
+    @Override
+    public void run(BoardGui<BlockColor> gui) throws InterruptedException {
         logger.atInfo().log("Staring game");
 
         // Create Game board
         ReadOnlyBoard<BlockColor> initialBoard;
         initialBoard = getStaticBoard();
-
-        BoardGui<BlockColor> gui = BoardGui.createColorBoard(PopItDriver::cell2Color);
+        initialBoard = getRandomBoard();
 
         PopItGame game = new PopItGame(initialBoard);
 
@@ -118,13 +148,17 @@ public class PopItDriver {
         //ai = new RecursiveBoardHeuristic(gui);
         //ai = new RecursiveFirstPath(gui);
         //ai = new ExhaustiveRecursiveAI(gui);
-        //ai = new ExhaustiveIterativeAI(gui);
-        ai = new ExhaustiveThreadedAI(gui);
+        ai = new ExhaustiveIterativeAI(gui);
+        //ai = new ExhaustiveThreadedAI(gui);
 
         // Run Simulation
         runAi(ai, game, gui);
 
         logger.atInfo().log("Complete");
+    }
 
+    public static void main(String... args) throws InterruptedException {
+        PopItDriver driver = new PopItDriver();
+        driver.run(driver.getGui());
     }
 }
