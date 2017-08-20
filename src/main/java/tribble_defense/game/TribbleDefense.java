@@ -37,7 +37,7 @@ public class TribbleDefense implements Game<Cell> {
         clearBoard();
         addObstacles(nubObstacles);
         // TODO Allow hard coding initial board
-        // TODO options with generating board, num of entities to place, range of entites placed
+        // TODO options with generating board, num of entities to place, range of entities placed
         board.set(Cell.N1, 0, 0);
     }
 
