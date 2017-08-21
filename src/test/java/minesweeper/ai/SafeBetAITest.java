@@ -1,8 +1,7 @@
 package minesweeper.ai;
 
-import com.google.common.collect.BiMap;
-import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import common.board.BoardLoaders;
 import common.board.ReadOnlyBoard;
 import common.utils.IntVector2;
@@ -10,6 +9,7 @@ import minesweeper.game.Cell;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+import java.util.Map;
 
 import static com.google.common.truth.Truth.assertThat;
 
@@ -19,7 +19,7 @@ class SafeBetAITest {
         return toConvert.toString().charAt(0);
     }
 
-    private static BiMap<Character, Cell> charMap = ImmutableBiMap.<Character, Cell>builder()
+    private static Map<Character, Cell> charMap = ImmutableMap.<Character, Cell>builder()
             .put(cell2Char(Cell.N0), Cell.N0)
             .put(cell2Char(Cell.N1), Cell.N1)
             .put(cell2Char(Cell.N2), Cell.N2)
@@ -29,12 +29,17 @@ class SafeBetAITest {
             .put(cell2Char(Cell.N6), Cell.N6)
             .put(cell2Char(Cell.N7), Cell.N7)
             .put(cell2Char(Cell.N8), Cell.N8)
-            .put(cell2Char(Cell.BOMB), Cell.BOMB)
+            .put(cell2Char(Cell.BOMB), Cell.EMPTY)
             .put(cell2Char(Cell.EMPTY), Cell.EMPTY)
             .build();
 
     private ReadOnlyBoard<Cell> getBoard(String boardStr) {
         return BoardLoaders.generateFromString(boardStr, charMap::get);
+    }
+
+    @Test
+    void getBoardTranslatesBombsToEmpty() {
+        assertThat(getBoard("EBE\n").toString()).isEqualTo("EEE\n");
     }
 
     @Test
@@ -85,7 +90,7 @@ class SafeBetAITest {
     void getMove_2Bombs() {
         ReadOnlyBoard<Cell> board = getBoard("" +
                 "111111\n" +
-                "1E1EE1\n" +
+                "1B1EB1\n" +
                 "111111\n" +
                 "");
 
@@ -100,7 +105,7 @@ class SafeBetAITest {
     void getMove_2BombsBug() {
         ReadOnlyBoard<Cell> board = getBoard("" +
                 "11111\n" +
-                "1E1EE\n" +
+                "1B1EB\n" +
                 "11111\n" +
                 "");
 
@@ -115,7 +120,7 @@ class SafeBetAITest {
     void getMove_largerNumbers() {
         ReadOnlyBoard<Cell> board = getBoard("" +
                 "11211\n" +
-                "1E2EE\n" +
+                "1B2BE\n" +
                 "11211\n" +
                 "");
 
