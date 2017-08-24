@@ -36,4 +36,12 @@ class MaxAreaFlooditAiTest {
                 ""))).isEqualTo(FloodColor.BLUE);
     }
 
+    @Test
+    void getSquare_maxArea() {
+        assertThat(new MaxAreaFlooditAi().getMove(getBoardFromString("" +
+                "RGB\n" +
+                "BBB\n" +
+                ""))).isEqualTo(FloodColor.BLUE);
+    }
+
 }
