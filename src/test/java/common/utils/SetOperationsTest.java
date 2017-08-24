@@ -40,11 +40,6 @@ class SetOperationsTest {
     }
 
     @Test
-    void dumbCoverageTest() {
-        new SetOperations();
-    }
-
-    @Test
     void testMyPowerEquals() throws Exception {
         assertEqualPowerSets(
                 ImmutableSet.of(

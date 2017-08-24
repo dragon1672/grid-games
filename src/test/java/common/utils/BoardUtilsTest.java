@@ -22,11 +22,6 @@ class BoardUtilsTest {
     }
 
     @Test
-    void dumbCoverageTest() {
-        new BoardUtils();
-    }
-
-    @Test
     void getConnectedCells_singleCell() throws Exception {
         testConnectedCells("" +
                         "M",

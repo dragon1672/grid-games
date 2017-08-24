@@ -1,6 +1,5 @@
 package common.utils;
 
-import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
@@ -13,8 +12,12 @@ import java.util.stream.Stream;
 
 public class SetOperations {
 
-    @VisibleForTesting
-    SetOperations() {
+    // for test coverage
+    private SetOperations() {
+    }
+
+    static {
+        new SetOperations();
     }
 
     /**

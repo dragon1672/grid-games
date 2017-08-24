@@ -1,6 +1,5 @@
 package common.utils;
 
-import com.google.common.annotations.VisibleForTesting;
 import common.board.ReadOnlyBoard;
 import common.board.SimulatedBoard;
 
@@ -17,8 +16,12 @@ import static com.google.common.collect.ImmutableSet.toImmutableSet;
 
 public class BoardUtils {
 
-    @VisibleForTesting
-    BoardUtils() {
+    // for test coverage
+    private BoardUtils() {
+    }
+
+    static {
+        new BoardUtils();
     }
 
     public static <T> Set<IntVector2> getConnectedCells(ReadOnlyBoard<T> board, IntVector2 startingPos) {

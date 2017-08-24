@@ -18,11 +18,6 @@ class BoardLoadersTest {
             .build();
 
     @Test
-    void dumbCoverageTest() {
-        new BoardLoaders();
-    }
-
-    @Test
     void generateFromString_simpleSquare() throws Exception {
         Board<Character> board = BoardLoaders.generateFromString("" +
                 "ABC\n" +

@@ -9,11 +9,6 @@ import static com.google.common.truth.Truth.assertThat;
 class AsciiBoardTest {
 
     @Test
-    void dumbCoverageTest() {
-        new AsciiBoard();
-    }
-
-    @Test
     void boardToString_singleCell() {
         String boardString = "A\n";
 

@@ -1,7 +1,6 @@
 package common.utils;
 
 
-import com.google.common.annotations.VisibleForTesting;
 import common.board.ReadOnlyBoard;
 
 import java.util.function.Function;
@@ -11,8 +10,12 @@ import java.util.function.Function;
  */
 public class AsciiBoard {
 
-    @VisibleForTesting
-    AsciiBoard() {
+    // for test coverage
+    private AsciiBoard() {
+    }
+
+    static {
+        new AsciiBoard();
     }
 
     public static <T> String boardToString(ReadOnlyBoard<T> gameBoard) {
