@@ -1,8 +1,8 @@
 package flood_it.ai;
 
+import common.board.ReadOnlyBoard;
 import flood_it.game.FloodColor;
-import flood_it.game.FloodIt;
 
 public interface FlooditAI {
-    FloodColor getMove(FloodIt game);
+    FloodColor getMove(ReadOnlyBoard<FloodColor> board);
 }

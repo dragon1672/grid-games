@@ -1,19 +1,15 @@
 package flood_it;
 
-import com.google.common.collect.ImmutableList;
 import common.gui.BoardGui;
 import common.interfaces.Runner;
 import common.utils.AsciiBoard;
 import common.utils.Flogger;
 import flood_it.ai.FlooditAI;
 import flood_it.ai.MaxAreaFlooditAi;
-import flood_it.ai.MaxPerimeterFlooditAi;
-import flood_it.ai.RandomFlooditAi;
 import flood_it.game.FloodColor;
 import flood_it.game.FloodIt;
 
 import java.awt.*;
-import java.util.List;
 
 /**
  * Runner Class
@@ -22,10 +18,7 @@ public class FlooditDriver implements Runner<FloodColor> {
 
     private static final Flogger logger = Flogger.getInstance();
 
-    @SuppressWarnings("unused")
-    private static final List<FlooditAI> AIs = ImmutableList.of(new RandomFlooditAi(), new MaxPerimeterFlooditAi(), new MaxAreaFlooditAi());
-
-    private static Color cell2Color(FloodColor floodColor) {
+    public static Color cell2Color(FloodColor floodColor) {
         switch (floodColor) {
             case RED:
                 return Color.RED;
@@ -50,7 +43,7 @@ public class FlooditDriver implements Runner<FloodColor> {
 
         while (!game.isComplete()) {
             moves++;
-            FloodColor move = ai.getMove(game);
+            FloodColor move = ai.getMove(game.getBoard());
             logger.atInfo().log("Floodit AI picked color %s", move);
             game.floodColor(move);
             gui.updateBoard(game.getBoard());

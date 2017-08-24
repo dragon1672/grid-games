@@ -1,5 +1,6 @@
 package flood_it.ai;
 
+import com.google.common.annotations.VisibleForTesting;
 import common.board.ReadOnlyBoard;
 import common.utils.BoardUtils;
 import common.utils.IntVector2;
@@ -15,7 +16,8 @@ import java.util.stream.Collectors;
  */
 public class MaxPerimeterFlooditAi implements FlooditAI {
 
-    private static int getBoardPerimeter(ReadOnlyBoard<FloodColor> board) {
+    @VisibleForTesting
+    static <T> int getBoardPerimeter(ReadOnlyBoard<T> board) {
         Set<IntVector2> connectedSquares = BoardUtils.getConnectedCells(board, FloodIt.MOVE_POS);
         return connectedSquares
                 .stream()
@@ -40,11 +42,11 @@ public class MaxPerimeterFlooditAi implements FlooditAI {
 
 
     @Override
-    public FloodColor getMove(FloodIt game) {
+    public FloodColor getMove(ReadOnlyBoard<FloodColor> board) {
         // this gets into an infinite loop where it doesn't modify the board because the moves that progress the game would decrease the service area.
-        List<FloodColor> possibleMoves = FloodItBoardUtilities.movesOnBoard(game.getBoard());
+        List<FloodColor> possibleMoves = FloodItBoardUtilities.movesOnBoard(board);
         Map<FloodColor, Integer> movedAndPerimeter = possibleMoves.stream()
-                .collect(Collectors.toMap(blockType -> blockType, blockType -> getBoardPerimeter(FloodItBoardUtilities.simulateFillMove(game.getBoard(), blockType))));
+                .collect(Collectors.toMap(blockType -> blockType, blockType -> getBoardPerimeter(FloodItBoardUtilities.simulateFillMove(board, blockType))));
         Optional<Map.Entry<FloodColor, Integer>> maxEntry = movedAndPerimeter
                 .entrySet()
                 .stream()
