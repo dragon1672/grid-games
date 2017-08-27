@@ -1,5 +1,7 @@
 package common.utils;
 
+import javax.annotation.CheckReturnValue;
+
 /**
  * Immutable 3 dimensional vector of ints
  */
@@ -11,18 +13,27 @@ public class IntVector2 {
         this.y = y;
     }
 
+    @CheckReturnValue
     public static IntVector2 of(int x, int y) {
         return new IntVector2(x, y);
     }
 
+    @CheckReturnValue
+    public static IntVector2 iVec(int x, int y) {
+        return of(x, y);
+    }
+
+    @CheckReturnValue
     public IntVector2 add(IntVector2 that) {
         return of(this.x + that.x, this.y + that.y);
     }
 
+    @CheckReturnValue
     public IntVector2 sub(IntVector2 that) {
         return of(this.x - that.x, this.y - that.y);
     }
 
+    @CheckReturnValue
     public IntVector2 mul(float scale) {
         return of((int) (x * scale), (int) (y * scale));
     }
