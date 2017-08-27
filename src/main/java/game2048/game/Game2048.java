@@ -50,49 +50,10 @@ public class Game2048 implements Game<Cell> {
     }
 
     public void move(Move move) {
-        //TODO make this not sloppy and export to utils
-
-        //TODO fix bug where combinations should happen from the bottom up
-        /*
-            taking
-
-            1
-            111
-            1 1
-
-            Moving down should result in
-
-            1
-            212
-
-            This implementation could create
-
-            2   // the top merged before the bottom :(
-            112
-         */
-        final boolean[] somethingMoved = new boolean[1];
-        do {
-            somethingMoved[0] = false;
-            BoardUtils.boardPositionsAsStream(board).forEach(pos -> {
-                IntVector2 shiftedPos = pos.add(move.dir);
-                if (board.isValidPos(shiftedPos) && board.get(pos) != Cell.N0) {
-                    Cell currentCell = board.get(pos);
-                    if (board.get(shiftedPos) == Cell.N0) {
-                        board.set(currentCell, shiftedPos); // copy into empty space
-                        board.set(Cell.N0, pos); // remove from old position
-                        somethingMoved[0] = true;
-                    } else if (board.get(shiftedPos) == currentCell) {
-                        // We need combine stuff
-                        Cell nextLevel = getNextLevel(currentCell);
-                        board.set(nextLevel, shiftedPos);
-                        board.set(Cell.N0, pos); // remove from old position
-                        somethingMoved[0] = true;
-                    }
-                }
-            });
-        } while (somethingMoved[0]);
+        Utils2048.mergeCells(board, move.dir);
 
         addRandomSquare(1);
+
     }
 
     private boolean canMove(Move move) {
