@@ -18,7 +18,7 @@ class Utils2048Test {
 
     DynamicTest testMergeCell(String input, Move move, String expected, String name) {
         return DynamicTest.dynamicTest(
-                "merge cells: " + name,
+                name,
                 () -> {
                     Board<Cell> board = genBoard(input);
 
