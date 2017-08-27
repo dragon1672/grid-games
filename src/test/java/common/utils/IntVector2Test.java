@@ -52,6 +52,7 @@ class IntVector2Test {
     @Test
     void testThatAddIsImmutable() {
         IntVector2 original = IntVector2.of(12, 34);
+        //noinspection ResultOfMethodCallIgnored
         original.add(IntVector2.of(56, 78));
 
         assertThat(original).isEqualTo(IntVector2.of(12, 34));
