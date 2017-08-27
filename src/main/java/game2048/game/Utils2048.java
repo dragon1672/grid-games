@@ -61,7 +61,18 @@ public class Utils2048 {
         final boolean[] somethingMoved = new boolean[1];
         do {
             somethingMoved[0] = false;
-            BoardUtils.boardPositionsAsStream(board).forEach(pos -> {
+            BoardUtils.boardPositionsAsStream(board)
+                    .sorted((p1, p2) -> {
+                        // this will transform one component to positive/negative based off dir, and the other component to 0
+                        IntVector2 p1Mutated = iVec(-1 * dir.x * p1.x, -1 * dir.y * p1.y);
+                        IntVector2 p2Mutated = iVec(-1 * dir.x * p2.x, -1 * dir.y * p2.y);
+                        checkState(p1Mutated.x == 0 || p1Mutated.y == 0);
+                        checkState(p2Mutated.x == 0 || p2Mutated.y == 0);
+                        int p1Val = p1Mutated.x + p1Mutated.y; // we want ot preserve the 0
+                        int p2Val = p2Mutated.x != 0 ? p2Mutated.x : p2Mutated.y; // alternative way of writing this
+                        return Integer.compare(p1Val, p2Val);
+                    })
+                    .forEach(pos -> {
                 IntVector2 shiftedPos = pos.add(dir);
                 if (board.isValidPos(shiftedPos) && board.get(pos) != Cell.N0) {
                     Cell currentCell = board.get(pos);
