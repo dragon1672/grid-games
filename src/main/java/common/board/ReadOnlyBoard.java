@@ -20,13 +20,13 @@ public interface ReadOnlyBoard<T> {
         return get(pos.x, pos.y);
     }
 
-    default boolean validPos(int x, int y) {
+    default boolean isValidPos(int x, int y) {
         return 0 <= x && x < getWidth()
                 && 0 <= y && y < getHeight();
     }
 
-    default boolean validPos(IntVector2 pos) {
-        return validPos(pos.x, pos.y);
+    default boolean isValidPos(IntVector2 pos) {
+        return isValidPos(pos.x, pos.y);
     }
 
     default boolean isEqualTo(ReadOnlyBoard that) {

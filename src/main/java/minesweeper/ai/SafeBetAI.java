@@ -28,7 +28,7 @@ public class SafeBetAI implements MineSweeperAI {
         for (IntVector2 numericPosition : positionsWithNumbers) {
             List<IntVector2> neighborlyMoves = MineSweeper.DIRECTIONS.stream()
                     .map(numericPosition::add)
-                    .filter(board::validPos)
+                    .filter(board::isValidPos)
                     .filter(pos -> board.get(pos) == Cell.EMPTY)
                     .collect(toImmutableList());
             // take the number and divide it by the number of open squares adjacent to it

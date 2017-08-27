@@ -75,7 +75,7 @@ public class Game2048 implements Game<Cell> {
             somethingMoved[0] = false;
             BoardUtils.boardPositionsAsStream(board).forEach(pos -> {
                 IntVector2 shiftedPos = pos.add(move.dir);
-                if (board.validPos(shiftedPos) && board.get(pos) != Cell.N0) {
+                if (board.isValidPos(shiftedPos) && board.get(pos) != Cell.N0) {
                     Cell currentCell = board.get(pos);
                     if (board.get(shiftedPos) == Cell.N0) {
                         board.set(currentCell, shiftedPos); // copy into empty space
@@ -100,7 +100,7 @@ public class Game2048 implements Game<Cell> {
         Set<IntVector2> positions = BoardUtils.boardPositionsAsStream(board).collect(Collectors.toSet());
         for (IntVector2 pos : positions) {
             IntVector2 shiftedPos = pos.add(move.dir);
-            if (board.validPos(shiftedPos) && board.get(pos) != Cell.N0) {
+            if (board.isValidPos(shiftedPos) && board.get(pos) != Cell.N0) {
                 Cell currentCell = board.get(pos);
                 if (board.get(shiftedPos) == Cell.N0) {
                     return true;

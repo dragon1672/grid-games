@@ -94,7 +94,7 @@ public class MineSweeper implements Game<Cell> {
 
     private void revealLocation(IntVector2 pos) {
         initMinesIfUnset(pos);
-        if (!board.validPos(pos) || board.get(pos) != Cell.EMPTY) {
+        if (!board.isValidPos(pos) || board.get(pos) != Cell.EMPTY) {
             return; // this cell has already been revealed
         }
         Cell cellVal = calculateCell(pos);

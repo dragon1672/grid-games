@@ -66,7 +66,7 @@ public class BoardUtils {
     }
 
     public static <T> boolean isUniformColor(ReadOnlyBoard<T> board) {
-        checkArgument(board.validPos(0, 0));
+        checkArgument(board.isValidPos(0, 0));
         return isUniformColor(board, board.get(0, 0));
     }
 

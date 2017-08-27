@@ -13,7 +13,7 @@ public class LightsOutBoardUtils {
                 IntVector2.of(0, 1),
                 IntVector2.of(0, -1))
                 .map(pos::add)
-                .filter(board::validPos)
+                .filter(board::isValidPos)
                 .forEach(cellToToggle -> {
                     LightsOutCell cellToSet = board.get(cellToToggle) == LightsOutCell.TRUE ? LightsOutCell.FALSE : LightsOutCell.TRUE;
                     board.set(cellToSet, cellToToggle);

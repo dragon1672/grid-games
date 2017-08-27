@@ -42,19 +42,19 @@ class BoardImplTest {
     @Test
     void checkValidPos_valid() {
         Board<Character> board = BoardImpl.make(5, 100);
-        assertThat(board.validPos(IntVector2.of(0, 0))).isTrue();
+        assertThat(board.isValidPos(IntVector2.of(0, 0))).isTrue();
     }
 
     @Test
     void checkValidPos_outOfBounds() {
         Board<Character> board = BoardImpl.make(5, 100);
-        assertThat(board.validPos(IntVector2.of(10, 10))).isFalse();
+        assertThat(board.isValidPos(IntVector2.of(10, 10))).isFalse();
     }
 
     @Test
     void checkValidPos_negative() {
         Board<Character> board = BoardImpl.make(5, 10);
-        assertThat(board.validPos(IntVector2.of(-1, -1))).isFalse();
+        assertThat(board.isValidPos(IntVector2.of(-1, -1))).isFalse();
     }
 
     @Test
