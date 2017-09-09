@@ -3,7 +3,7 @@ package common.utils;
 import javax.annotation.CheckReturnValue;
 
 /**
- * Immutable 3 dimensional vector of ints
+ * Immutable 2 dimensional vector of ints
  */
 public class IntVector2 {
     public final int x, y;
