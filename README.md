@@ -1,9 +1,5 @@
 # Grid Games
 
-[![pipeline status](https://gitlab.com/dragon1672/grid-games/badges/master/pipeline.svg)](https://gitlab.com/dragon1672/grid-games/commits/master)
-
-[![coverage report](https://gitlab.com/dragon1672/grid-games/badges/master/coverage.svg)](https://gitlab.com/dragon1672/grid-games/commits/master)
-
 Frame work and simple grid based games and writing AIs for those games
 
 ## Flood it
