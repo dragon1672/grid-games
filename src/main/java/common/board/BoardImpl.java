@@ -1,6 +1,7 @@
 package common.board;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkState;
 
 /**
  * Game Board
@@ -20,6 +21,13 @@ public class BoardImpl<T> implements Board<T> {
         return new BoardImpl<>(width, height);
     }
 
+    /**
+     * Creates a shallow copy of the board using board.get to retrieve the cells.
+     *
+     * @param board board to copy
+     * @param <T>   cell type
+     * @return duplicate of board.
+     */
     public static <T> Board<T> copyOf(ReadOnlyBoard<T> board) {
         Board<T> duplicatedBoard = new BoardImpl<>(board.getWidth(), board.getHeight());
         for (int x = 0; x < board.getWidth(); x++) {
@@ -30,6 +38,9 @@ public class BoardImpl<T> implements Board<T> {
         return duplicatedBoard;
     }
 
+    /**
+     * @throws IllegalArgumentException if position is invalid
+     */
     private void validatePosition(int x, int y) {
         checkArgument(0 <= x, "x must be positive");
         checkArgument(0 <= y, "y must be positive");
@@ -50,7 +61,7 @@ public class BoardImpl<T> implements Board<T> {
 
     @Override
     public int getHeight() {
-        assert board.length > 0;
+        checkState(board.length > 0, "Board length expected to be > 0");
         return board[0].length;
     }
 
