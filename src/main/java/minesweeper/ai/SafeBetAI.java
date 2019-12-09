@@ -4,7 +4,6 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
 import common.board.ReadOnlyBoard;
-import common.utils.BoardUtils;
 import common.utils.IntVector2;
 import common.utils.RandomUtils;
 import minesweeper.game.Cell;
@@ -19,9 +18,7 @@ import static com.google.common.collect.ImmutableList.toImmutableList;
 public class SafeBetAI implements MineSweeperAI {
     private Multimap<IntVector2, Float> generateBombProbabilities(ReadOnlyBoard<Cell> board) {
         // for each number of the board, generate probabilities for each of it's neighbors that it this number applies to it
-        List<IntVector2> positionsWithNumbers = BoardUtils.boardPositionsAsStream(board)
-                .filter(pos -> board.get(pos).numAdjacentBombs > 0) // only pay attention to the numbers
-                .collect(toImmutableList());
+        List<IntVector2> positionsWithNumbers = MineSweeperBoardUtils.getShownNumbers(board);
 
         ImmutableMultimap.Builder<IntVector2, Float> results = ImmutableMultimap.builder();
 

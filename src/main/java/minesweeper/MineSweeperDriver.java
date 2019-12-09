@@ -6,8 +6,8 @@ import common.interfaces.Runner;
 import common.utils.AsciiBoard;
 import common.utils.Flogger;
 import common.utils.IntVector2;
+import minesweeper.ai.GraphyMineSweeperAi;
 import minesweeper.ai.MineSweeperAI;
-import minesweeper.ai.SafeBetAI;
 import minesweeper.game.Cell;
 import minesweeper.game.MineSweeper;
 
@@ -84,12 +84,13 @@ public class MineSweeperDriver implements Runner<Cell> {
         logger.atInfo().log("Staring game");
 
         // Create Game board
-        MineSweeper game = MineSweeper.create(10, 10, 9);
+        MineSweeper game = MineSweeper.create(10, 10, 20);
 
         // Set an MineSweeperAI
         MineSweeperAI ai;
         //ai = new RandomMineSweeperAi();
-        ai = new SafeBetAI();
+        //ai = new SafeBetAI();
+        ai = new GraphyMineSweeperAi();
 
         runAi(ai, game, gui);
 
