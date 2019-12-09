@@ -13,24 +13,27 @@ class ColorBoard<T> extends BoardGrid<T> {
 
     private ReadOnlyBoard<T> board;
     private final Function<T, Color> colorConverter;
+    private int cellPadding;
 
-    ColorBoard(Function<T, Color> colorConverter) {
+    ColorBoard(Function<T, Color> colorConverter, int cellPadding) {
         this.colorConverter = colorConverter;
+        this.cellPadding = cellPadding;
         setMinimumSize(new Dimension(BoardGui.windowDimensions, BoardGui.windowDimensions));
         setVisible(true);
     }
 
-    private int getCellDimensions() {
-        return BoardGui.getCellDimensions(board);
+    private float getCellDimensions() {
+        return BoardGui.getCellDimensions(board, cellPadding, getSize());
     }
 
     private void paintBoardWithColors(Graphics g, ReadOnlyBoard<T> board) {
         for (int x = 0; x < board.getWidth(); x++) {
             for (int y = 0; y < board.getHeight(); y++) {
+                float cellDims = getCellDimensions();
                 IntVector2 pos = IntVector2.of(x, y);
                 g.setColor(colorConverter.apply(board.get(pos)));
-                IntVector2 coord = BoardGui.getStartPos(pos, getCellDimensions());
-                g.fillRect(coord.x, coord.y, getCellDimensions(), getCellDimensions());
+                IntVector2 coord = BoardGui.getStartPos(pos, cellDims, cellPadding);
+                g.fillRect(coord.x, coord.y, (int) cellDims, (int) cellDims);
             }
         }
     }
