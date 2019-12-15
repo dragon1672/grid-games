@@ -16,10 +16,19 @@ public class GraphyMineSweeperAi implements MineSweeperAI {
 
     @Override
     public IntVector2 getMove(ReadOnlyBoard<Cell> board) {
-        Map<IntVector2, Danger> cellStateMap = generateConnections(board);
+        Map<IntVector2, Danger> cellStateMap = flagBoard(board);
         logger.atInfo().log("map size %d", cellStateMap.size());
         Optional<IntVector2> safeMove = cellStateMap.keySet().stream().filter(pos -> cellStateMap.get(pos) == Danger.SAFE).findFirst();
-        return safeMove.orElseGet(() -> RandomUtils.randomFromList(MineSweeperBoardUtils.getMoves(board)));
+        if (safeMove.isPresent()) {
+            return safeMove.get();
+        }
+        Optional<IntVector2> unknownMove = cellStateMap.keySet().stream().filter(pos -> cellStateMap.get(pos) == Danger.Unknown).findFirst();
+        if (unknownMove.isPresent()) {
+            return unknownMove.get();
+        }
+
+        // looks like everything is a bomb?!?
+        return RandomUtils.randomFromList(MineSweeperBoardUtils.getMoves(board));
     }
 
     private enum Danger {
