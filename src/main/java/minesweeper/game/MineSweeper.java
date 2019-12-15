@@ -10,6 +10,7 @@ import common.utils.BoardUtils;
 import common.utils.IntVector2;
 import common.utils.RandomUtils;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -56,16 +57,19 @@ public class MineSweeper implements Game<Cell> {
         return minePositions.isEmpty();
     }
 
-    private void initMinesIfUnset(IntVector2 blacklistedLocation) {
+    private void initMinesIfUnset(IntVector2 revealPos) {
         if (minesAreUnSet()) {
-            placeMines(blacklistedLocation);
+            Set<IntVector2> blackListedLocations = new HashSet<>();
+            blackListedLocations.add(revealPos);
+            DIRECTIONS.stream().map(revealPos::add).forEach(blackListedLocations::add);
+            placeMines(blackListedLocations);
         }
     }
 
-    private void placeMines(IntVector2 blackListedLocation) {
+    private void placeMines(Set<IntVector2> blackListedLocations) {
         clearBoard();
 
-        List<IntVector2> possibleMineLocations = BoardUtils.boardPositionsAsStream(board).filter(pos -> !pos.equals(blackListedLocation)).collect(toImmutableList());
+        List<IntVector2> possibleMineLocations = BoardUtils.boardPositionsAsStream(board).filter(pos -> !blackListedLocations.contains(pos)).collect(toImmutableList());
 
         minePositions = ImmutableSet.copyOf(RandomUtils.randomSubset(possibleMineLocations, numMines));
     }
