@@ -3,25 +3,17 @@ package minesweeper.game;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import common.board.Board;
-import common.board.BoardImpl;
-import common.board.ReadOnlyBoard;
+import common.board.BoardLoaders;
 import common.interfaces.Game;
 import common.utils.BoardUtils;
 import common.utils.IntVector2;
-import common.utils.RandomUtils;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.collect.ImmutableList.toImmutableList;
+import static com.google.common.collect.ImmutableSet.toImmutableSet;
 
 /**
  * MineSweeper game
  */
-public class MineSweeper implements Game<Cell> {
-
+public abstract class MineSweeper implements Game<Cell> {
     public static final ImmutableList<IntVector2> DIRECTIONS = ImmutableList.of(
             IntVector2.of(1, 1),
             IntVector2.of(1, 0),
@@ -33,126 +25,31 @@ public class MineSweeper implements Game<Cell> {
             IntVector2.of(-1, -1)
     );
 
-    private Board<Cell> board;
-    private Set<IntVector2> minePositions = ImmutableSet.of();
-    private final int numMines;
+    public abstract void move(IntVector2 move);
 
-    private MineSweeper(int width, int height, int numMines) {
-        checkArgument(numMines > 0, "Must have more than 0 mines");
-        checkArgument(numMines < width * height, "cannot have more mines than grid spaces");
-        this.numMines = numMines;
-        board = BoardImpl.make(width, height);
-        clearBoard();
-    }
+    public abstract boolean hasWon();
 
-    private void clearBoard() {
-        for (int x = 0; x < board.getWidth(); x++) {
-            for (int y = 0; y < board.getHeight(); y++) {
-                board.set(Cell.EMPTY, x, y);
-            }
-        }
-    }
+    public abstract boolean hasLost();
 
-    private boolean minesAreUnSet() {
-        return minePositions.isEmpty();
-    }
+    public abstract void revealAllBombs();
 
-    private void initMinesIfUnset(IntVector2 revealPos) {
-        if (minesAreUnSet()) {
-            Set<IntVector2> blackListedLocations = new HashSet<>();
-            blackListedLocations.add(revealPos);
-            DIRECTIONS.stream().map(revealPos::add).forEach(blackListedLocations::add);
-            placeMines(blackListedLocations);
-        }
-    }
-
-    private void placeMines(Set<IntVector2> blackListedLocations) {
-        clearBoard();
-
-        List<IntVector2> possibleMineLocations = BoardUtils.boardPositionsAsStream(board).filter(pos -> !blackListedLocations.contains(pos)).collect(toImmutableList());
-
-        minePositions = ImmutableSet.copyOf(RandomUtils.randomSubset(possibleMineLocations, numMines));
-    }
-
-    private Cell calculateCell(IntVector2 position) {
-        if (minePositions.contains(position)) {
-            return Cell.BOMB;
-        }
-        int numOfTouchingBombs = DIRECTIONS.stream()
-                .map(position::add) // map to neighbor location
-                .map(minePositions::contains) // check if bomb
-                .mapToInt(neighborHasBomb -> neighborHasBomb ? 1 : 0)
-                .sum();
-        return Cell.cellNumMap.inverse().get(numOfTouchingBombs);
-    }
-
-
+    /**
+     * Creates a minesweeper game that will generate bomb locations after the first move.
+     */
     public static MineSweeper create(int width, int height, int mines) {
-        return new MineSweeper(width, height, mines);
+        return new MineSweeperGameGenerated(width, height, mines);
     }
 
-    public void move(IntVector2 pos) {
-        checkArgument(!isComplete(), "game complete, no further moves allowed");
-        revealLocation(pos);
-    }
-
-    private void revealLocation(IntVector2 pos) {
-        initMinesIfUnset(pos);
-        if (!board.isValidPos(pos) || board.get(pos) != Cell.EMPTY) {
-            return; // this cell has already been revealed
-        }
-        Cell cellVal = calculateCell(pos);
-        board.set(cellVal, pos);
-        if (cellVal == Cell.N0) {
-            DIRECTIONS.forEach(direction -> revealLocation(pos.add(direction)));
-        }
-    }
-
-    private boolean unrevealedMineHere(IntVector2 pos) {
-        return board.get(pos).equals(Cell.EMPTY) && minePositions.contains(pos);
-    }
-
-    public boolean hasWon() {
-        if (minesAreUnSet()) {
-            return false;
-        }
-        for (int x = 0; x < board.getWidth(); x++) {
-            for (int y = 0; y < board.getHeight(); y++) {
-                IntVector2 pos = IntVector2.of(x, y);
-                if (board.get(pos) == Cell.BOMB || !unrevealedMineHere(pos) && !board.get(pos).finalState) {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
-
-    public boolean hasLost() {
-        if (minesAreUnSet()) {
-            return false;
-        }
-        for (int x = 0; x < board.getWidth(); x++) {
-            for (int y = 0; y < board.getHeight(); y++) {
-                IntVector2 pos = IntVector2.of(x, y);
-                if (board.get(pos) == Cell.BOMB) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    public void revealAllBombs() {
-        minePositions.forEach(this::revealLocation);
-    }
-
-    @Override
-    public boolean isComplete() {
-        return hasWon() || hasLost();
-    }
-
-    @Override
-    public ReadOnlyBoard<Cell> getBoard() {
-        return board;
+    /**
+     * Generate a board based off a string showing bomb locations.
+     * String is expected to be formatted in a square
+     *
+     * @param str      board to be converted
+     * @param bombChar char to be interpreted as a bomb
+     */
+    public static MineSweeper createFromString(String str, char bombChar) {
+        Board<Cell> bombBoard = BoardLoaders.generateFromString(str, c -> c == bombChar ? Cell.BOMB : Cell.EMPTY);
+        ImmutableSet<IntVector2> minePositions = BoardUtils.boardPositionsAsRandomStream(bombBoard).filter(pos -> bombBoard.get(pos) == Cell.BOMB).collect(toImmutableSet());
+        return new MineSweeperGameFromBombs(bombBoard.getWidth(), bombBoard.getHeight(), minePositions);
     }
 }

@@ -21,6 +21,16 @@ public class BoardImpl<T> implements Board<T> {
         return new BoardImpl<>(width, height);
     }
 
+    public static <T> Board<T> make(int width, int height, T defaultValue) {
+        Board<T> board = make(width, height);
+        for (int x = 0; x < board.getWidth(); x++) {
+            for (int y = 0; y < board.getHeight(); y++) {
+                board.set(defaultValue, x, y);
+            }
+        }
+        return board;
+    }
+
     /**
      * Creates a shallow copy of the board using board.get to retrieve the cells.
      *
