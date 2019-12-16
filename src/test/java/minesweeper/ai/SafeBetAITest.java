@@ -49,7 +49,7 @@ class SafeBetAITest {
                 "EE\n" +
                 "");
 
-        IntVector2 result = new SafeBetAI().getMove(board, );
+        IntVector2 result = new SafeBetAI().getMove(board, 1);
 
         assertThat(result).isAnyOf(
                 IntVector2.of(0, 0),
