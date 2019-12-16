@@ -2,9 +2,7 @@ package common.utils;
 
 import com.google.common.annotations.VisibleForTesting;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 import java.util.stream.Stream;
 
 import static com.google.common.base.Preconditions.checkArgument;
@@ -39,5 +37,23 @@ public class RandomUtils {
 
     public static <T> Stream<T> randomizeStream(Stream<T> stream) {
         return stream.sorted(new RandomComparator<>(rand));
+    }
+
+    private static class RandomComparator<T> implements Comparator<T> {
+        private final Random rand;
+        private final Map<T, Integer> cache = new IdentityHashMap<>();
+
+        RandomComparator(Random rand) {
+            this.rand = rand;
+        }
+
+        private int getVal(T val) {
+            return cache.computeIfAbsent(val, ignored -> rand.nextInt());
+        }
+
+        @Override
+        public int compare(T o1, T o2) {
+            return Integer.compare(getVal(o1), getVal(o2));
+        }
     }
 }
