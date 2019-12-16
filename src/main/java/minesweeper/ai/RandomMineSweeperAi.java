@@ -9,7 +9,7 @@ import minesweeper.game.MineSweeperBoardUtils;
 public class RandomMineSweeperAi implements MineSweeperAI {
 
     @Override
-    public IntVector2 getMove(ReadOnlyBoard<Cell> board) {
+    public IntVector2 getMove(ReadOnlyBoard<Cell> board, int numBombs) {
         return RandomUtils.randomFromList(MineSweeperBoardUtils.getMoves(board));
     }
 }

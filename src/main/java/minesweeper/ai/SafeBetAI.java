@@ -59,7 +59,7 @@ public class SafeBetAI implements MineSweeperAI {
     }
 
     @Override
-    public IntVector2 getMove(ReadOnlyBoard<Cell> board) {
+    public IntVector2 getMove(ReadOnlyBoard<Cell> board, int numBombs) {
         return RandomUtils.randomFromList(getMoves(board));
     }
 }

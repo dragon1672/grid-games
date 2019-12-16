@@ -54,7 +54,7 @@ public class MineSweeperDriver implements Runner<Cell> {
 
         while (!game.isComplete()) {
             moves++;
-            IntVector2 move = ai.getMove(game.getBoard());
+            IntVector2 move = ai.getMove(game.getBoard(), game.getMineCount());
             logger.atInfo().log("MineSweeperAI picked color %s", move);
             game.move(move);
             gui.updateBoard(game.getBoard());

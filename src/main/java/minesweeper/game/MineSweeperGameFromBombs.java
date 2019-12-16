@@ -92,6 +92,11 @@ class MineSweeperGameFromBombs extends MineSweeper {
     }
 
     @Override
+    public int getMineCount() {
+        return minePositions.size();
+    }
+
+    @Override
     public ReadOnlyBoard<Cell> getBoard() {
         return board;
     }

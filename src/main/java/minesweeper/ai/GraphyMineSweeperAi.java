@@ -15,7 +15,7 @@ public class GraphyMineSweeperAi implements MineSweeperAI {
     private static final Flogger logger = Flogger.getInstance();
 
     @Override
-    public IntVector2 getMove(ReadOnlyBoard<Cell> board) {
+    public IntVector2 getMove(ReadOnlyBoard<Cell> board, int numBombs) {
         Map<IntVector2, Danger> cellStateMap = flagBoard(board);
         logger.atInfo().log("map size %d", cellStateMap.size());
 

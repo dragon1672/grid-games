@@ -79,6 +79,11 @@ class MineSweeperGameGenerated extends MineSweeper {
     }
 
     @Override
+    public int getMineCount() {
+        return numMines;
+    }
+
+    @Override
     public boolean isComplete() {
         if (game != null) {
             return game.isComplete();

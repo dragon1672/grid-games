@@ -33,6 +33,8 @@ public abstract class MineSweeper implements Game<Cell> {
 
     public abstract void revealAllBombs();
 
+    public abstract int getMineCount();
+
     /**
      * Creates a minesweeper game that will generate bomb locations after the first move.
      */
