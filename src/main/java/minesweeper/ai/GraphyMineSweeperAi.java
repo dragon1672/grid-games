@@ -18,11 +18,13 @@ public class GraphyMineSweeperAi implements MineSweeperAI {
     public IntVector2 getMove(ReadOnlyBoard<Cell> board) {
         Map<IntVector2, Danger> cellStateMap = flagBoard(board);
         logger.atInfo().log("map size %d", cellStateMap.size());
+
         Optional<IntVector2> safeMove = cellStateMap.keySet().stream().filter(pos -> cellStateMap.get(pos) == Danger.SAFE).findFirst();
         if (safeMove.isPresent()) {
             return safeMove.get();
         }
-        Optional<IntVector2> unknownMove = cellStateMap.keySet().stream().filter(pos -> cellStateMap.get(pos) == Danger.Unknown).findFirst();
+        Optional<IntVector2> unknownMove = MineSweeperBoardUtils.getMoves(board).stream().filter(pos -> cellStateMap.get(pos) == Danger.Unknown).findFirst();
+        //noinspection OptionalIsPresent
         if (unknownMove.isPresent()) {
             return unknownMove.get();
         }
@@ -31,13 +33,18 @@ public class GraphyMineSweeperAi implements MineSweeperAI {
         return RandomUtils.randomFromList(MineSweeperBoardUtils.getMoves(board));
     }
 
-    private enum Danger {
+    enum Danger {
         BOMB,
         Unknown,
         SAFE,
     }
 
-    private Map<IntVector2, Danger> generateConnections(ReadOnlyBoard<Cell> board) {
+    /***
+     * Flags each cell as safe/bomb or unknown.
+     * @param board board to flag
+     * @return map of board positions and known danger
+     */
+    public static Map<IntVector2, Danger> flagBoard(ReadOnlyBoard<Cell> board) {
         LinkedHashSet<IntVector2> squaresToCheck = new LinkedHashSet<>(MineSweeperBoardUtils.getShownNumbers(board));
 
         Map<IntVector2, Danger> cellStateMap = new HashMap<>();
