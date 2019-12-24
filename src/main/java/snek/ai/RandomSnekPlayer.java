@@ -21,7 +21,7 @@ public class RandomSnekPlayer implements SnekPlayer {
     private Optional<Direction> randomValidMove(SnekBody snek, ReadOnlyBoard<SnekCell> board) {
         return RandomUtils.randomizeStream(DIRECTIONS.stream()
                 .filter(direction -> {
-                    IntVector2 pos = snek.getHead().add(direction.dir);
+                    IntVector2 pos = snek.getHead().add(direction.vector);
                     return board.isValidPos(pos)
                             && !snek.getBodyPositions().contains(pos);
                 }))

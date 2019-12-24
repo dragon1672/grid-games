@@ -4,7 +4,7 @@ import common.gui.BoardGui;
 import common.interfaces.Runner;
 import common.utils.Flogger;
 import common.utils.IntVector2;
-import snek.ai.RandomSnekPlayer;
+import snek.ai.AStarySnekPlayer;
 import snek.ai.SnekPlayer;
 import snek.game.SnekCell;
 import snek.game.SnekGame;
@@ -42,16 +42,18 @@ public class SnekDriver implements Runner<SnekCell> {
 
         // Create Game board
         SnekGame game = new SnekGame(10, 10, IntVector2.of(3, 5), IntVector2.of(7, 5), 5, 2);
-        SnekPlayer ai = new RandomSnekPlayer();
+        //SnekPlayer ai = new RandomSnekPlayer();
+        SnekPlayer ai = new AStarySnekPlayer();
 
         game.registerOnChange(gui::updateBoard);
+        gui.updateBoard(game.getBoard());
 
         ai.play(game);
 
         logger.atInfo().log("Complete");
     }
 
-    public static void main(String... args) throws InterruptedException {
+    public static void main(String... args) {
         SnekDriver driver = new SnekDriver();
         driver.run(driver.getGui());
     }

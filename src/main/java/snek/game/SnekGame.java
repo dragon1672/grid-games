@@ -19,15 +19,14 @@ public class SnekGame implements Game<SnekCell> {
     private static final Flogger logger = Flogger.getInstance();
 
     private enum GameState {
-        Running, SnekDead, GameWon
+        Running, SnekDead, GameWon;
     }
 
-    final private List<Consumer<ReadOnlyBoard<SnekCell>>> boardSubscribers = new ArrayList<>();
-
+    private final List<Consumer<ReadOnlyBoard<SnekCell>>> boardSubscribers = new ArrayList<>();
     private GameState gameState = GameState.Running;
-    private SnekBoard board;
-    private MoveableSnekBody snekBody;
-    private int appleIncrease;
+    private final SnekBoard board;
+    private final MoveableSnekBody snekBody;
+    private final int appleIncrease;
 
     public SnekGame(int width, int height, IntVector2 startPos, IntVector2 startingApple, int bodyLength, int appleIncrease) {
         this.appleIncrease = appleIncrease;
@@ -37,6 +36,10 @@ public class SnekGame implements Game<SnekCell> {
 
     public SnekBody getSnek() {
         return snekBody;
+    }
+
+    public IntVector2 getApplePos() {
+        return board.getApplePos();
     }
 
     public void move(Direction dir) {
@@ -62,7 +65,7 @@ public class SnekGame implements Game<SnekCell> {
     }
 
     private void moveApple() {
-        Optional<IntVector2> newApplePos = RandomUtils.randomizeStream(BoardUtils.boardPositionsAsStream(board).filter(snekBody.getBodyPositions()::contains)).findFirst();
+        Optional<IntVector2> newApplePos = RandomUtils.randomizeStream(BoardUtils.boardPositionsAsStream(board).filter(pos -> !snekBody.getBodyPositions().contains(pos))).findFirst();
         if (newApplePos.isPresent()) {
             logger.atInfo().log("Moving apple to %s", newApplePos);
             board.setApplePos(newApplePos.get());

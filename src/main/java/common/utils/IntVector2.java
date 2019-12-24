@@ -38,6 +38,10 @@ public class IntVector2 {
         return of((int) (x * scale), (int) (y * scale));
     }
 
+    public int lengthSquared() {
+        return x * x + y * y;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

@@ -41,7 +41,7 @@ public class MoveableSnekBody implements SnekBody {
     }
 
     public boolean move(Direction direction) {
-        IntVector2 newHead = bodyChunks.getFirst().add(direction.dir);
+        IntVector2 newHead = bodyChunks.getFirst().add(direction.vector);
         boolean selfCollide = bodyLocations.contains(newHead);
         bodyChunks.addFirst(newHead);
         bodyLocations.add(newHead);
