@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class RandomUtilsTest {
 
     @Before
-    void setup() {
+    public void setup() {
         RandomUtils.rand = new Random(42);
     }
 
@@ -43,7 +43,6 @@ class RandomUtilsTest {
     @Test
     void randomFromList_emptyList() {
         assertThrows(IllegalArgumentException.class, () -> RandomUtils.randomFromList(ImmutableList.of()));
-
     }
 
     @Test
