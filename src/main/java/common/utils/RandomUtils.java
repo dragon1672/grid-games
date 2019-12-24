@@ -27,7 +27,8 @@ public class RandomUtils {
         return mutableSource.subList(0, count);
     }
 
-    public static <T> T randomFromList(T[] list) {
+    @SafeVarargs
+    public static <T> T randomFromList(T... list) {
         return list[rand.nextInt(list.length)];
     }
 
