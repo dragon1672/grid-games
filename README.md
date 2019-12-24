@@ -25,6 +25,14 @@ STATUS: Brute force AI
 
 It's minesweeper! try to not click a bomb
 
+https://youtu.be/lj8SnL7TEZw
+
+## Snek
+
+AI only game of snake. Gobble the apples and avoid hitting your own snake.
+
+A* based AI: https://youtu.be/jHLq9kY-dYk
+
 ## Pop it
 
 "pop" a cell and remaining cells will drop down and to the left.
