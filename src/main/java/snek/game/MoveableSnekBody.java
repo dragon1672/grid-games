@@ -26,6 +26,7 @@ public class MoveableSnekBody implements SnekBody {
     public void extendBody(int bodyPartsToAdd) {
         for (int i = 0; i < bodyPartsToAdd; i++) {
             bodyChunks.add(bodyChunks.getLast());
+            bodyLocations.add(bodyChunks.getLast());
         }
     }
 
