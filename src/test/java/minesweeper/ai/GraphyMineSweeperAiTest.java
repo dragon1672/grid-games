@@ -20,10 +20,10 @@ class GraphyMineSweeperAiTest {
                 "1??\n" +
                 "");
 
-        Map<IntVector2, GraphyMineSweeperAi.Danger> flags = GraphyMineSweeperAi.flagBoard(board);
+        Map<IntVector2, Danger> flags = GraphyMineSweeperAi.flagBoard(board);
 
-        assertThat(flags).containsEntry(IntVector2.of(1, 1), GraphyMineSweeperAi.Danger.BOMB);
-        assertThat(flags).containsEntry(IntVector2.of(2, 1), GraphyMineSweeperAi.Danger.SAFE);
+        assertThat(flags).containsEntry(IntVector2.of(1, 1), Danger.BOMB);
+        assertThat(flags).containsEntry(IntVector2.of(2, 1), Danger.SAFE);
     }
 
     private ReadOnlyBoard<Cell> boardFromString(String str) {

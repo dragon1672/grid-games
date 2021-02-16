@@ -84,23 +84,19 @@ public class GraphyMineSweeperAi implements MineSweeperAI {
         logger.atInfo().log("map size %d", cellStateMap.size());
 
         Optional<IntVector2> safeMove = cellStateMap.keySet().stream().filter(pos -> cellStateMap.get(pos) == Danger.SAFE).findFirst();
+        logger.atInfo().log("%d safe moves discovered", cellStateMap.keySet().stream().filter(pos -> cellStateMap.get(pos) == Danger.SAFE).count());
         if (safeMove.isPresent()) {
             return safeMove.get();
         }
         Optional<IntVector2> unknownMove = MineSweeperBoardUtils.getMoves(board).stream().filter(pos -> cellStateMap.get(pos) == Danger.Unknown).findFirst();
-        //noinspection OptionalIsPresent
+        logger.atInfo().log("%d unknown moves discovered", cellStateMap.keySet().stream().filter(pos -> cellStateMap.get(pos) == Danger.Unknown).count());
         if (unknownMove.isPresent()) {
             return unknownMove.get();
         }
 
+        logger.atInfo().log("Uhh can't find anything, looks like everything is a bomb");
         // looks like everything is a bomb?!?
         return RandomUtils.randomFromList(MineSweeperBoardUtils.getMoves(board));
-    }
-
-    enum Danger {
-        BOMB,
-        Unknown,
-        SAFE,
     }
 
 }
