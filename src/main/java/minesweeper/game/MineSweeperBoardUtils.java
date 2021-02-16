@@ -8,6 +8,7 @@ import java.util.List;
 
 import static com.google.common.collect.ImmutableList.toImmutableList;
 
+@SuppressWarnings("UnstableApiUsage")
 public class MineSweeperBoardUtils {
     public static List<IntVector2> getMoves(ReadOnlyBoard<Cell> board) {
         return BoardUtils.boardPositionsAsStream(board).filter(pos -> !board.get(pos).finalState).collect(toImmutableList());

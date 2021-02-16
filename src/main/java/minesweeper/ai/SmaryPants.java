@@ -21,15 +21,55 @@ public class SmaryPants implements MineSweeperAI {
     private static final Flogger logger = Flogger.getInstance();
 
 
-    private static class ExecutionTask {
+
+    private static class DangerAnalysis {
         @NotNull
-        public final ImmutableMap<IntVector2, Danger> newDangers;
+        public final ImmutableMap<IntVector2, Danger> dangerAnalysis;
         @NotNull
         public final ReadOnlyBoard<Cell> board;
 
-        private ExecutionTask(ImmutableMap<IntVector2, Danger> newDangers, ReadOnlyBoard<Cell> board) {
-            this.newDangers = newDangers;
+        private DangerAnalysis(@NotNull ImmutableMap<IntVector2, Danger> dangerAnalysis, @NotNull ReadOnlyBoard<Cell> board) {
+            this.dangerAnalysis = dangerAnalysis;
             this.board = board;
+        }
+
+        protected ImmutableSet<IntVector2> get(Danger danger) {
+            return dangerAnalysis.entrySet().stream().filter(entry -> entry.getValue() == danger).map(Map.Entry::getKey).collect(toImmutableSet());
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (!(o instanceof DangerAnalysis)) return false;
+            DangerAnalysis that = (DangerAnalysis) o;
+            return dangerAnalysis.equals(that.dangerAnalysis) && board.equals(that.board);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(dangerAnalysis, board);
+        }
+
+        public double dangerAnalysisOfPosition(IntVector2 pos, int numOfGameBombs) {
+            if (dangerAnalysis.getOrDefault(pos, Danger.Unknown).equals(Danger.SAFE)) return 0;
+            if (dangerAnalysis.getOrDefault(pos, Danger.Unknown).equals(Danger.BOMB)) return 1;
+            // dangerAnalysis only has entries for board squares that are valid moves.
+            int possibleMoves = MineSweeperBoardUtils.getMoves(board).size();
+            int numOfBombs = get(Danger.BOMB).size();
+            int numOfSafe = get(Danger.SAFE).size();
+            int validMovesWithNoData = possibleMoves - numOfBombs - numOfSafe;
+            int numOfUnknownBombs = numOfGameBombs - numOfBombs;
+            return (double) numOfUnknownBombs / (double) validMovesWithNoData;
+        }
+    }
+
+    private static class ExecutionTask extends DangerAnalysis {
+        private ExecutionTask(ImmutableMap<IntVector2, Danger> dangerAnalysis, ReadOnlyBoard<Cell> board) {
+            super(dangerAnalysis, board);
+        }
+
+        public static ExecutionTask Make(@NotNull ImmutableMap<IntVector2, Danger> knownDangers, @NotNull ReadOnlyBoard<Cell> board) {
+            return new ExecutionTask(knownDangers, board);
         }
 
         public static Optional<ExecutionTask> Make(@NotNull IntVector2 bombAssumption, @NotNull ImmutableMap<IntVector2, Danger> knownDangers, @NotNull ReadOnlyBoard<Cell> board, int numBombs) {
@@ -50,7 +90,7 @@ public class SmaryPants implements MineSweeperAI {
         }
 
         public boolean hasUnknowns() {
-            return newDangers.values().stream().noneMatch(Danger.Unknown::equals);
+            return dangerAnalysis.values().stream().noneMatch(Danger.Unknown::equals);
         }
 
         public ImmutableSet<IntVector2> getUnknowns() {
@@ -59,23 +99,6 @@ public class SmaryPants implements MineSweeperAI {
 
         public ImmutableSet<IntVector2> getBombs() {
             return get(Danger.BOMB);
-        }
-
-        private ImmutableSet<IntVector2> get(Danger danger) {
-            return newDangers.entrySet().stream().filter(entry -> entry.getValue() == danger).map(Map.Entry::getKey).collect(toImmutableSet());
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            ExecutionTask that = (ExecutionTask) o;
-            return newDangers.equals(that.newDangers) && board.equals(that.board);
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(newDangers, board);
         }
     }
 
@@ -87,9 +110,7 @@ public class SmaryPants implements MineSweeperAI {
      * Making the assumption it is meaningless to determine the possible bomb locations for large chunks of undiscovered board.
      * This means the length of snapshot could be different (and less than the total number of bombs)
      */
-    private static ImmutableList<ImmutableSet<IntVector2>> getPossibleBombLocations(ImmutableMap<IntVector2, Danger> knownDangers, ReadOnlyBoard<Cell> board, int numMines) {
-
-
+    private static ImmutableList<DangerAnalysis> getPossibleBombLocations(ImmutableMap<IntVector2, Danger> knownDangers, ReadOnlyBoard<Cell> board, int numMines) {
         LinkedHashSet<ExecutionTask> tasks = knownDangers
                 .keySet()
                 .stream()
@@ -98,10 +119,11 @@ public class SmaryPants implements MineSweeperAI {
                 .map(Optional::get)
                 .collect(Collectors.toCollection(LinkedHashSet::new));
 
-        ImmutableList.Builder<ImmutableSet<IntVector2>> values = ImmutableList.builder();
+        ImmutableList.Builder<DangerAnalysis> values = ImmutableList.builder();
+        values.add(ExecutionTask.Make(knownDangers, board));
 
-        // track seen tasks to prevent dups (go ahead and seed with initial list of tasks)
-        Set<ExecutionTask> seenTasks = new HashSet<>(tasks);
+        // track seen tasks to prevent dups
+        Set<ExecutionTask> seenTasks = new HashSet<>();
 
         Optional<ExecutionTask> task;
         while ((task = tasks.stream().findFirst()).isPresent()) {
@@ -122,27 +144,31 @@ public class SmaryPants implements MineSweeperAI {
                         .map(Optional::get)
                         .forEach(tasks::add);
             } else {
-                values.add(task.get().getBombs());
+                values.add(task.get());
             }
 
         }
         return values.build();
     }
 
-    private static float calculateProbability(IntVector2 pos, ImmutableList<ImmutableSet<IntVector2>> possibleBombLocations) {
-        return (float) possibleBombLocations.parallelStream().filter(bombPositions -> bombPositions.contains(pos)).count() / (float) possibleBombLocations.size();
+    private static double calculateProbability(IntVector2 pos, ImmutableList<DangerAnalysis> bombAnalysisResults, int numBombs) {
+        return bombAnalysisResults
+                .stream()
+                .mapToDouble(analysis -> analysis.dangerAnalysisOfPosition(pos, numBombs))
+                .average()
+                .orElseThrow(() -> new IllegalArgumentException("Need some results to analyze."));
     }
 
-    private static Optional<Map.Entry<IntVector2, Float>> calculateLowestProbFromUnknowns(ImmutableMap<IntVector2, Danger> cellStateMap, ReadOnlyBoard<Cell> board, int numBombs) {
-        ImmutableList<ImmutableSet<IntVector2>> possibleBombLocations = getPossibleBombLocations(cellStateMap, board, numBombs);
+    private static Map.Entry<IntVector2, Double> calculateLowestProbFromUnknowns(ImmutableMap<IntVector2, Danger> cellStateMap, ReadOnlyBoard<Cell> board, int numBombs) {
+        ImmutableList<DangerAnalysis> bombAnalysisResults = getPossibleBombLocations(cellStateMap, board, numBombs);
         // Map each unknown to a probability
 
-        Map<IntVector2, Float> mineProbabilities = cellStateMap.entrySet().stream()
-                .filter(entry -> entry.getValue() == Danger.Unknown)
-                .map(Map.Entry::getKey) // simplify just to positions now it is filtered
-                .collect(ImmutableMap.toImmutableMap(k -> k, pos -> calculateProbability(pos, possibleBombLocations)));
-        Optional<Map.Entry<IntVector2, Float>> lowestProb = mineProbabilities.entrySet().stream().min((a, b) -> Float.compare(a.getValue(), b.getValue()));
-        lowestProb.ifPresent(intVector2FloatEntry -> logger.atInfo().log("Determined safest option of %s with a %f chance to be a bomb from %d possible states", intVector2FloatEntry.getKey(), intVector2FloatEntry.getValue(), possibleBombLocations.size()));
+        Map<IntVector2, Double> mineProbabilities = MineSweeperBoardUtils.getMoves(board)
+                .stream()
+                .collect(ImmutableMap.toImmutableMap(k -> k, pos -> calculateProbability(pos, bombAnalysisResults, numBombs)));
+        Map.Entry<IntVector2, Double> lowestProb = mineProbabilities.entrySet().stream().min(Comparator.comparingDouble(Map.Entry::getValue)).orElseThrow(() -> new IllegalArgumentException("We gotta have some moves!"));
+        logger.atInfo().log("Determined safest option of %s with a %f chance to be a bomb from %d possible states",
+                lowestProb.getKey(), lowestProb.getValue(), bombAnalysisResults.size());
         return lowestProb;
     }
 
@@ -159,33 +185,7 @@ public class SmaryPants implements MineSweeperAI {
             return safeMove.get();
         }
 
-        Optional<Map.Entry<IntVector2, Float>> safestOption = calculateLowestProbFromUnknowns(cellStateMap, board, numBombs);
-        if (safestOption.isPresent()) {
-            return safestOption.get().getKey();
-        }
-
-        // Everything touching a number looks like a bomb, there might be a square hidden in a corner
-        logger.atInfo().log("unable to determine a safe option when filtering. Examining the entire board");
-        Map<IntVector2, Danger> entireBoardStateMap = new HashMap<>(cellStateMap);
-        MineSweeperBoardUtils.getMoves(board).forEach(pos -> entireBoardStateMap.putIfAbsent(pos, Danger.Unknown));
-
-        // The first move hit this case
-        Optional<Map.Entry<IntVector2, Float>> safestOptionFromEntireBoard = calculateLowestProbFromUnknowns(ImmutableMap.copyOf(entireBoardStateMap), board, numBombs);
-        if (safestOptionFromEntireBoard.isPresent()) {
-            return safestOptionFromEntireBoard.get().getKey();
-        }
-
-        Optional<IntVector2> randomNotBomb = MineSweeperBoardUtils
-                .getMoves(board)
-                .stream()
-                .filter(pos -> Danger.BOMB.equals(cellStateMap.get(pos))).findFirst();
-        if (randomNotBomb.isPresent()) {
-            logger.atInfo().log("Picking a random not bomb location");
-            return randomNotBomb.get();
-        }
-
-        // looks like everything is a bomb?!?
-        logger.atInfo().log("Unable to make any form of a smart choice, might as well pick something random");
-        return RandomUtils.randomFromList(MineSweeperBoardUtils.getMoves(board));
+        Map.Entry<IntVector2, Double> safestOption = calculateLowestProbFromUnknowns(cellStateMap, board, numBombs);
+        return safestOption.getKey();
     }
 }

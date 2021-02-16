@@ -1,7 +1,6 @@
 package common.board;
 
 import com.google.common.collect.ImmutableBiMap;
-import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
 import java.util.function.Function;
@@ -93,8 +92,8 @@ class BoardLoadersTest {
     @Test
     void generateFromImage_square() throws Exception {
         ReadOnlyBoard<Character> board = BoardLoaders.generateFromImage("src/test/java/common/board/board_square.PNG", 3, 3, RGB_2_BLOCK::get);
-        Assert.assertEquals(3, board.getWidth());
-        Assert.assertEquals(3, board.getHeight());
+        assertThat(board.getWidth()).named("Width").isEqualTo(3);
+        assertThat(board.getHeight()).named("Height").isEqualTo(3);
         assertThat(board.get(0, 0)).isEqualTo('R');
         assertThat(board.get(1, 0)).isEqualTo('G');
         assertThat(board.get(2, 0)).isEqualTo('G');
@@ -109,8 +108,9 @@ class BoardLoadersTest {
     @Test
     void generateFromImage_rect() throws Exception {
         ReadOnlyBoard<Character> board = BoardLoaders.generateFromImage("src/test/java/common/board/board_rect.PNG", 3, 2, RGB_2_BLOCK::get);
-        Assert.assertEquals(3, board.getWidth());
-        Assert.assertEquals(2, board.getHeight());
+        assertThat(board.getWidth()).named("Width").isEqualTo(3);
+        assertThat(board.getHeight()).named("Height").isEqualTo(2);
+        ;
         assertThat(board.get(0, 0)).isEqualTo('G');
         assertThat(board.get(1, 0)).isEqualTo('G');
         assertThat(board.get(2, 0)).isEqualTo('Y');
