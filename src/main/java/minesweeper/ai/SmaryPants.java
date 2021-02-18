@@ -137,6 +137,7 @@ public class SmaryPants implements MineSweeperAI {
                     .map(bombAssumptionPos -> ExecutionTask.Make(bombAssumptionPos, task.dangerAnalysis, board, numMines))
                     .filter(Optional::isPresent)
                     .map(Optional::get)
+                    .filter(new_task -> !seenTasks.contains(new_task))
                     .forEach(new_task -> getPossibleBombLocationsHelper(seenTasks, values, board, new_task, numMines));
         }
     }

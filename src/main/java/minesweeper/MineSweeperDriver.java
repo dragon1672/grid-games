@@ -93,8 +93,10 @@ public class MineSweeperDriver implements Runner<Cell> {
                 //MineSweeper.create(16, 16, 40); // 15.625% bombs
                 // expert has 99 mines and is always 16 × 30 (or 30 × 16)
                 //MineSweeper.create(16, 30, 99); // 20.625% bombs
-                // Custom
-                MineSweeper.create(100, 100, 2000); // 20% bombs
+                // Custom expert level
+                MineSweeper.create(10, 10, 20); // 20% bombs
+        // MEGA Custom
+        //MineSweeper.create(100, 100, 2000); // 20% bombs
 
         // Set an MineSweeperAI
         MineSweeperAI ai;
