@@ -9,6 +9,7 @@ import common.utils.Flogger;
 import common.utils.IntVector2;
 import common.utils.RandomUtils;
 import minesweeper.game.Cell;
+import minesweeper.game.MineSweeper;
 import minesweeper.game.MineSweeperBoardUtils;
 
 import java.util.*;
@@ -19,6 +20,7 @@ import static com.google.common.collect.ImmutableSet.toImmutableSet;
 public class SmaryPants implements MineSweeperAI {
     private static final Flogger logger = Flogger.getInstance();
 
+    public static MineSweeper game;
 
 
     private static class DangerAnalysis {

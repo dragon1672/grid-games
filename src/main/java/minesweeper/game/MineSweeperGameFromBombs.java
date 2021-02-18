@@ -14,7 +14,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 class MineSweeperGameFromBombs extends MineSweeper {
 
     private Board<Cell> board;
-    private final ImmutableSet<IntVector2> minePositions;
+    public final ImmutableSet<IntVector2> minePositions;
 
     MineSweeperGameFromBombs(int width, int height, ImmutableSet<IntVector2> minePositions) {
         board = BoardImpl.make(width, height, Cell.EMPTY);

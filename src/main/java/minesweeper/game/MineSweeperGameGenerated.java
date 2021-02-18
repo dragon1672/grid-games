@@ -16,7 +16,7 @@ import static com.google.common.collect.ImmutableList.toImmutableList;
 
 class MineSweeperGameGenerated extends MineSweeper {
     @Nullable
-    private MineSweeperGameFromBombs game = null;
+    public MineSweeperGameFromBombs game = null;
     private final int width;
     private final int height;
     private final ReadOnlyBoard<Cell> emptyBoard;
