@@ -103,6 +103,8 @@ public class MineSweeperDriver implements Runner<Cell> {
         //ai = new GraphyMineSweeperAi();
         ai = new SmaryPants();
 
+        SmaryPants.game = game;
+
         runAi(ai, game, gui);
 
         logger.atInfo().log("Complete");

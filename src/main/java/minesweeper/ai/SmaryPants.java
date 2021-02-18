@@ -12,9 +12,6 @@ import minesweeper.game.Cell;
 import minesweeper.game.MineSweeperBoardUtils;
 
 import java.util.*;
-import java.util.concurrent.CompletionService;
-import java.util.concurrent.ExecutorCompletionService;
-import java.util.concurrent.Executors;
 
 import static com.google.common.collect.ImmutableSet.toImmutableSet;
 
@@ -112,30 +109,21 @@ public class SmaryPants implements MineSweeperAI {
         values.add(ExecutionTask.Make(knownDangers, board));
 
         // track seen tasks to prevent dups
-        Set<ExecutionTask> seenTasks = new HashSet<>();
-        CompletionService<Void> executor = new ExecutorCompletionService<Void>(Executors.newCachedThreadPool());
+        Set<ExecutionTask> seenTasks = Collections.synchronizedSet(new HashSet<>());
 
         knownDangers
                 .keySet()
-                .stream()
+                .parallelStream()
                 .map(bombAssumptionPos -> ExecutionTask.Make(bombAssumptionPos, knownDangers, board, numMines))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
-                .forEach(task -> executor.submit(() -> {
-                    getPossibleBombLocationsHelper(executor, seenTasks, values, board, task, numMines);
-                    return null;
-                }));
+                .forEach(task -> getPossibleBombLocationsHelper(seenTasks, values, board, task, numMines));
 
-
-        // busy loop wait
-        // TODO this seems like a bad idea
-        while (executor.poll() != null) {
-        }
 
         return ImmutableList.copyOf(values);
     }
 
-    private static void getPossibleBombLocationsHelper(CompletionService<Void> executor, Set<ExecutionTask> seenTasks, List<DangerAnalysis> values, ReadOnlyBoard<Cell> board, ExecutionTask task, int numMines) {
+    private static void getPossibleBombLocationsHelper(Set<ExecutionTask> seenTasks, List<DangerAnalysis> values, ReadOnlyBoard<Cell> board, ExecutionTask task, int numMines) {
         if (seenTasks.contains(task)) {
             return;
         } else {
@@ -145,14 +133,11 @@ public class SmaryPants implements MineSweeperAI {
         if (unknowns.isEmpty()) {
             values.add(task);
         } else {
-            unknowns.stream()
+            unknowns.parallelStream()
                     .map(bombAssumptionPos -> ExecutionTask.Make(bombAssumptionPos, task.dangerAnalysis, board, numMines))
                     .filter(Optional::isPresent)
                     .map(Optional::get)
-                    .forEach(new_task -> executor.submit(() -> {
-                        getPossibleBombLocationsHelper(executor, seenTasks, values, board, new_task, numMines);
-                        return null;
-                    }));
+                    .forEach(new_task -> getPossibleBombLocationsHelper(seenTasks, values, board, new_task, numMines));
         }
     }
 
