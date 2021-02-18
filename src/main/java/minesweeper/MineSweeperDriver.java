@@ -59,7 +59,7 @@ public class MineSweeperDriver implements Runner<Cell> {
             game.move(move);
             gui.updateBoard(game.getBoard());
             logger.atInfo().log("board state\n%s", AsciiBoard.boardToString(game.getBoard()));
-            Thread.sleep(200);
+            Thread.sleep(50);
         }
 
         logger.atInfo().log("Game Complete after %d rounds", moves);
@@ -94,7 +94,7 @@ public class MineSweeperDriver implements Runner<Cell> {
                 // expert has 99 mines and is always 16 × 30 (or 30 × 16)
                 //MineSweeper.create(16, 30, 99); // 20.625% bombs
                 // Custom
-                MineSweeper.create(10, 10, 20); // 20% bombs
+                MineSweeper.create(100, 100, 2000); // 20% bombs
 
         // Set an MineSweeperAI
         MineSweeperAI ai;
