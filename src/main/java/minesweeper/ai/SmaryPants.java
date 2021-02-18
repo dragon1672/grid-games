@@ -12,7 +12,8 @@ import minesweeper.game.Cell;
 import minesweeper.game.MineSweeperBoardUtils;
 
 import java.util.*;
-import java.util.concurrent.Executor;
+import java.util.concurrent.CompletionService;
+import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.Executors;
 
 import static com.google.common.collect.ImmutableSet.toImmutableSet;
@@ -28,7 +29,7 @@ public class SmaryPants implements MineSweeperAI {
         public final ImmutableMap<IntVector2, Danger> dangerAnalysis;
         @NotNull
         public final ReadOnlyBoard<Cell> board;
-        private Map<Danger, Long> count_cache = new HashMap<>();
+        private final Map<Danger, Long> count_cache = new HashMap<>();
 
         private DangerAnalysis(@NotNull ImmutableMap<IntVector2, Danger> dangerAnalysis, @NotNull ReadOnlyBoard<Cell> board) {
             this.dangerAnalysis = dangerAnalysis;
@@ -112,8 +113,7 @@ public class SmaryPants implements MineSweeperAI {
 
         // track seen tasks to prevent dups
         Set<ExecutionTask> seenTasks = new HashSet<>();
-        Executor executor = Executors.newCachedThreadPool();
-
+        CompletionService<Void> executor = new ExecutorCompletionService<Void>(Executors.newCachedThreadPool());
 
         knownDangers
                 .keySet()
@@ -121,19 +121,21 @@ public class SmaryPants implements MineSweeperAI {
                 .map(bombAssumptionPos -> ExecutionTask.Make(bombAssumptionPos, knownDangers, board, numMines))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
-                .forEach(task -> getPossibleBombLocationsHelper(executor, seenTasks, values, board, task, numMines));
+                .forEach(task -> executor.submit(() -> {
+                    getPossibleBombLocationsHelper(executor, seenTasks, values, board, task, numMines);
+                    return null;
+                }));
 
 
-        try {
-            executor.wait();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        // busy loop wait
+        // TODO this seems like a bad idea
+        while (executor.poll() != null) {
         }
 
         return ImmutableList.copyOf(values);
     }
 
-    private static void getPossibleBombLocationsHelper(Executor executor, Set<ExecutionTask> seenTasks, List<DangerAnalysis> values, ReadOnlyBoard<Cell> board, ExecutionTask task, int numMines) {
+    private static void getPossibleBombLocationsHelper(CompletionService<Void> executor, Set<ExecutionTask> seenTasks, List<DangerAnalysis> values, ReadOnlyBoard<Cell> board, ExecutionTask task, int numMines) {
         if (seenTasks.contains(task)) {
             return;
         } else {
@@ -147,7 +149,10 @@ public class SmaryPants implements MineSweeperAI {
                     .map(bombAssumptionPos -> ExecutionTask.Make(bombAssumptionPos, task.dangerAnalysis, board, numMines))
                     .filter(Optional::isPresent)
                     .map(Optional::get)
-                    .forEach(new_task -> getPossibleBombLocationsHelper(executor, seenTasks, values, board, new_task, numMines));
+                    .forEach(new_task -> executor.submit(() -> {
+                        getPossibleBombLocationsHelper(executor, seenTasks, values, board, new_task, numMines);
+                        return null;
+                    }));
         }
     }
 
