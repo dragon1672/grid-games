@@ -12,7 +12,8 @@ import minesweeper.game.Cell;
 import minesweeper.game.MineSweeperBoardUtils;
 
 import java.util.*;
-import java.util.stream.Collectors;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 import static com.google.common.collect.ImmutableSet.toImmutableSet;
 
@@ -27,14 +28,17 @@ public class SmaryPants implements MineSweeperAI {
         public final ImmutableMap<IntVector2, Danger> dangerAnalysis;
         @NotNull
         public final ReadOnlyBoard<Cell> board;
+        private Map<Danger, Long> count_cache = new HashMap<>();
 
         private DangerAnalysis(@NotNull ImmutableMap<IntVector2, Danger> dangerAnalysis, @NotNull ReadOnlyBoard<Cell> board) {
             this.dangerAnalysis = dangerAnalysis;
             this.board = board;
         }
 
-        protected ImmutableSet<IntVector2> get(Danger danger) {
-            return dangerAnalysis.entrySet().stream().filter(entry -> entry.getValue() == danger).map(Map.Entry::getKey).collect(toImmutableSet());
+        protected long count(Danger danger) {
+            return count_cache.computeIfAbsent(danger, d ->
+                    dangerAnalysis.entrySet().stream().filter(entry -> entry.getValue() == danger).map(Map.Entry::getKey).count()
+            );
         }
 
         @Override
@@ -55,10 +59,10 @@ public class SmaryPants implements MineSweeperAI {
             if (dangerAnalysis.getOrDefault(pos, Danger.Unknown).equals(Danger.BOMB)) return 1;
             // dangerAnalysis only has entries for board squares that are valid moves.
             int possibleMoves = MineSweeperBoardUtils.getMoves(board).size();
-            int numOfBombs = get(Danger.BOMB).size();
-            int numOfSafe = get(Danger.SAFE).size();
-            int validMovesWithNoData = possibleMoves - numOfBombs - numOfSafe;
-            int numOfUnknownBombs = numOfGameBombs - numOfBombs;
+            long numOfBombs = count(Danger.BOMB);
+            long numOfSafe = count(Danger.SAFE);
+            long validMovesWithNoData = possibleMoves - numOfBombs - numOfSafe;
+            long numOfUnknownBombs = numOfGameBombs - numOfBombs;
             return (double) numOfUnknownBombs / (double) validMovesWithNoData;
         }
     }
@@ -89,16 +93,8 @@ public class SmaryPants implements MineSweeperAI {
             return Optional.of(new ExecutionTask(newDangers, board));
         }
 
-        public boolean hasUnknowns() {
-            return dangerAnalysis.values().stream().noneMatch(Danger.Unknown::equals);
-        }
-
         public ImmutableSet<IntVector2> getUnknowns() {
-            return get(Danger.Unknown);
-        }
-
-        public ImmutableSet<IntVector2> getBombs() {
-            return get(Danger.BOMB);
+            return dangerAnalysis.entrySet().stream().filter(entry -> entry.getValue() == Danger.Unknown).map(Map.Entry::getKey).collect(toImmutableSet());
         }
     }
 
@@ -111,49 +107,53 @@ public class SmaryPants implements MineSweeperAI {
      * This means the length of snapshot could be different (and less than the total number of bombs)
      */
     private static ImmutableList<DangerAnalysis> getPossibleBombLocations(ImmutableMap<IntVector2, Danger> knownDangers, ReadOnlyBoard<Cell> board, int numMines) {
-        LinkedHashSet<ExecutionTask> tasks = knownDangers
+        List<DangerAnalysis> values = Collections.synchronizedList(new ArrayList<>());
+        values.add(ExecutionTask.Make(knownDangers, board));
+
+        // track seen tasks to prevent dups
+        Set<ExecutionTask> seenTasks = new HashSet<>();
+        Executor executor = Executors.newCachedThreadPool();
+
+
+        knownDangers
                 .keySet()
                 .stream()
                 .map(bombAssumptionPos -> ExecutionTask.Make(bombAssumptionPos, knownDangers, board, numMines))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
-                .collect(Collectors.toCollection(LinkedHashSet::new));
+                .forEach(task -> getPossibleBombLocationsHelper(executor, seenTasks, values, board, task, numMines));
 
-        ImmutableList.Builder<DangerAnalysis> values = ImmutableList.builder();
-        values.add(ExecutionTask.Make(knownDangers, board));
 
-        // track seen tasks to prevent dups
-        Set<ExecutionTask> seenTasks = new HashSet<>();
-
-        Optional<ExecutionTask> task;
-        while ((task = tasks.stream().findFirst()).isPresent()) {
-            tasks.remove(task.get());
-            // filtering on task consumption to simplify code
-            // compared to filtering when adding to the task list
-            // TODO idea of having a task execution list that remembers to consolidate this logic
-            //      instead of using a LinkedHashSet
-            if (seenTasks.contains(task.get())) {
-                continue;
-            } else {
-                seenTasks.add(task.get());
-            }
-            if (task.get().hasUnknowns()) {
-                task.get().getUnknowns().stream()
-                        .map(bombAssumptionPos -> ExecutionTask.Make(bombAssumptionPos, knownDangers, board, numMines))
-                        .filter(Optional::isPresent)
-                        .map(Optional::get)
-                        .forEach(tasks::add);
-            } else {
-                values.add(task.get());
-            }
-
+        try {
+            executor.wait();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
-        return values.build();
+
+        return ImmutableList.copyOf(values);
+    }
+
+    private static void getPossibleBombLocationsHelper(Executor executor, Set<ExecutionTask> seenTasks, List<DangerAnalysis> values, ReadOnlyBoard<Cell> board, ExecutionTask task, int numMines) {
+        if (seenTasks.contains(task)) {
+            return;
+        } else {
+            seenTasks.add(task);
+        }
+        ImmutableSet<IntVector2> unknowns = task.getUnknowns();
+        if (unknowns.isEmpty()) {
+            values.add(task);
+        } else {
+            unknowns.stream()
+                    .map(bombAssumptionPos -> ExecutionTask.Make(bombAssumptionPos, task.dangerAnalysis, board, numMines))
+                    .filter(Optional::isPresent)
+                    .map(Optional::get)
+                    .forEach(new_task -> getPossibleBombLocationsHelper(executor, seenTasks, values, board, new_task, numMines));
+        }
     }
 
     private static double calculateProbability(IntVector2 pos, ImmutableList<DangerAnalysis> bombAnalysisResults, int numBombs) {
         return bombAnalysisResults
-                .stream()
+                .parallelStream()
                 .mapToDouble(analysis -> analysis.dangerAnalysisOfPosition(pos, numBombs))
                 .average()
                 .orElseThrow(() -> new IllegalArgumentException("Need some results to analyze."));
@@ -163,8 +163,10 @@ public class SmaryPants implements MineSweeperAI {
         ImmutableList<DangerAnalysis> bombAnalysisResults = getPossibleBombLocations(cellStateMap, board, numBombs);
         // Map each unknown to a probability
 
+        // TODO optimization idea remove the obvious bombs from the first list of moves
+        // TODO optimization idea group all the 'padded unknowns' which have the same probability together (special case it)
         Map<IntVector2, Double> mineProbabilities = MineSweeperBoardUtils.getMoves(board)
-                .stream()
+                .parallelStream()
                 .collect(ImmutableMap.toImmutableMap(k -> k, pos -> calculateProbability(pos, bombAnalysisResults, numBombs)));
         Map.Entry<IntVector2, Double> lowestProb = mineProbabilities.entrySet().stream().min(Comparator.comparingDouble(Map.Entry::getValue)).orElseThrow(() -> new IllegalArgumentException("We gotta have some moves!"));
         logger.atInfo().log("Determined safest option of %s with a %f chance to be a bomb from %d possible states",
