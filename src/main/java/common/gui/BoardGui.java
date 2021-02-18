@@ -10,7 +10,7 @@ import java.util.function.Function;
 public class BoardGui<T> extends JFrame {
 
     private static final int outerPadding = 10;
-    private static final int defaultCellPadding = 10;
+    private static final int defaultCellPadding = 5;
     static final int windowDimensions = 1000;
 
     static <T> float getCellDimensions(ReadOnlyBoard<T> board, int cellPadding, Dimension dims) {
