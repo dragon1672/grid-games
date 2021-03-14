@@ -8,7 +8,7 @@ import nonogram.AssignableSet;
 import java.util.Set;
 
 @SuppressWarnings("UnstableApiUsage")
-public class NonoGameUnknowns implements NonoGame, ReadOnlyBoard<Cell> {
+public class NonoGameFlatUnknowns implements FlatNonoGame, ReadOnlyBoard<Cell> {
 
     private final AssignableSet<IntVector2> selections = new AssignableSet<>();
     private final ImmutableList<Integer> columns;
@@ -17,7 +17,7 @@ public class NonoGameUnknowns implements NonoGame, ReadOnlyBoard<Cell> {
     private final AssignableSet<Integer> satisfiedColumns = new AssignableSet<>();
     private final AssignableSet<Integer> satisfiedRows = new AssignableSet<>();
 
-    public NonoGameUnknowns(ImmutableList<Integer> columns, ImmutableList<Integer> rows) {
+    public NonoGameFlatUnknowns(ImmutableList<Integer> columns, ImmutableList<Integer> rows) {
         if (columns.isEmpty() || rows.isEmpty()) {
             throw new IllegalArgumentException("columns and rows must be provided");
         }
@@ -40,7 +40,7 @@ public class NonoGameUnknowns implements NonoGame, ReadOnlyBoard<Cell> {
         }
     }
 
-    private NonoGameUnknowns(ImmutableList<Integer> columns, ImmutableList<Integer> rows, Set<IntVector2> selections, Set<Integer> satisfiedColumns, Set<Integer> satisfiedRows) {
+    private NonoGameFlatUnknowns(ImmutableList<Integer> columns, ImmutableList<Integer> rows, Set<IntVector2> selections, Set<Integer> satisfiedColumns, Set<Integer> satisfiedRows) {
         this.columns = columns;
         this.rows = rows;
         this.selections.addAll(selections);
@@ -117,8 +117,8 @@ public class NonoGameUnknowns implements NonoGame, ReadOnlyBoard<Cell> {
     }
 
     @Override
-    public NonoGame duplicate() {
-        return new NonoGameUnknowns(columns, rows, selections, satisfiedColumns, satisfiedRows);
+    public FlatNonoGame duplicate() {
+        return new NonoGameFlatUnknowns(columns, rows, selections, satisfiedColumns, satisfiedRows);
     }
 
     @Override

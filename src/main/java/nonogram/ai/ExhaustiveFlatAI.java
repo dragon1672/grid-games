@@ -8,26 +8,26 @@ import common.utils.BoardUtils;
 import common.utils.Flogger;
 import common.utils.IntVector2;
 import nonogram.game.Cell;
-import nonogram.game.NonoGame;
+import nonogram.game.FlatNonoGame;
 
 import java.util.*;
 import java.util.function.Supplier;
 
-public class ExhaustiveAI {
+public class ExhaustiveFlatAI {
     private static final Flogger logger = Flogger.getInstance();
 
     private static class Move implements Comparable<Move> {
-        private final NonoGame game;
+        private final FlatNonoGame game;
         private final Supplier<ImmutableSet<IntVector2>> possibleMoves = Suppliers.memoize(this::getPossibleMoves);
 
         // Game is mutable, so make sure to duplicate it before saving it as a move so possible moves doesn't get corrupted
         // opting to leave this free floating to avoid extra dups
-        private Move(NonoGame game) {
+        private Move(FlatNonoGame game) {
             this.game = game;
         }
 
         private ImmutableSet<IntVector2> getPossibleMoves() {
-            return ExhaustiveAI.getPossibleMoves(this.game);
+            return ExhaustiveFlatAI.getPossibleMoves(this.game);
         }
 
 
@@ -50,7 +50,7 @@ public class ExhaustiveAI {
         }
     }
 
-    private static ImmutableSet<IntVector2> getPossibleMoves(NonoGame game) {
+    private static ImmutableSet<IntVector2> getPossibleMoves(FlatNonoGame game) {
         List<Integer> freeColumns = new ArrayList<>(game.getColumns());
         List<Integer> freeRows = new ArrayList<>(game.getRows());
         BoardUtils.boardPositionsAsStream(game.getBoard())
@@ -73,7 +73,7 @@ public class ExhaustiveAI {
         return possibleMoves.build();
     }
 
-    private ImmutableSet<IntVector2> toggleAllPossibleMoves(NonoGame game, BoardGui<Cell> gui) {
+    private ImmutableSet<IntVector2> toggleAllPossibleMoves(FlatNonoGame game, BoardGui<Cell> gui) {
         ImmutableSet<IntVector2> possibleMoves = getPossibleMoves(game);
         for (IntVector2 pos : possibleMoves) {
             game.toggle(pos); // TOGGLE EVERYTHING!
@@ -82,8 +82,8 @@ public class ExhaustiveAI {
         return possibleMoves;
     }
 
-    private ImmutableSet<NonoGame> smartSolution(NonoGame game, BoardGui<Cell> gui) {
-        ImmutableSet.Builder<NonoGame> winningGames = ImmutableSet.builder();
+    private ImmutableSet<FlatNonoGame> smartSolution(FlatNonoGame game, BoardGui<Cell> gui) {
+        ImmutableSet.Builder<FlatNonoGame> winningGames = ImmutableSet.builder();
         Set<Move> seenMoves = new HashSet<>();
         TreeSet<Move> moves = new TreeSet<>();
         moves.add(new Move(game.duplicate()));
@@ -109,7 +109,7 @@ public class ExhaustiveAI {
                 }
             } else {
                 move.possibleMoves.get().forEach(pos -> {
-                    NonoGame newGame = move.game.duplicate();
+                    FlatNonoGame newGame = move.game.duplicate();
                     newGame.toggle(pos);
                     moves.add(new Move(newGame));
                 });
@@ -118,7 +118,7 @@ public class ExhaustiveAI {
         return winningGames.build();
     }
 
-    public ImmutableSet<NonoGame> solve(NonoGame game, BoardGui<Cell> gui) {
+    public ImmutableSet<FlatNonoGame> solve(FlatNonoGame game, BoardGui<Cell> gui) {
         //toggleAllPossibleMoves(game, gui);
         return smartSolution(game, gui);
     }

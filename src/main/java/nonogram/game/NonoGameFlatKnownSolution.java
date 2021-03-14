@@ -21,7 +21,7 @@ import static com.google.common.collect.ImmutableList.toImmutableList;
 import static com.google.common.collect.ImmutableSet.toImmutableSet;
 
 @SuppressWarnings("UnstableApiUsage")
-public class NonoGameKnownSolution implements NonoGame, ReadOnlyBoard<Cell> {
+public class NonoGameFlatKnownSolution implements FlatNonoGame, ReadOnlyBoard<Cell> {
 
     private final Set<IntVector2> selections = new HashSet<>();
     private LoadingCache<IntVector2, Integer> headerMemo = CacheBuilder.newBuilder()
@@ -40,14 +40,14 @@ public class NonoGameKnownSolution implements NonoGame, ReadOnlyBoard<Cell> {
     private final ReadOnlyBoard<Boolean> solution;
     private final ImmutableSet<IntVector2> solutionPositions;
 
-    public NonoGameKnownSolution(ReadOnlyBoard<Boolean> solution) {
+    public NonoGameFlatKnownSolution(ReadOnlyBoard<Boolean> solution) {
         // Make an immutable copy
         this.solution = BoardImpl.copyOf(solution);
         // map required positions into a set and map to game space
         solutionPositions = BoardUtils.boardPositionsAsStream(solution).filter(solution::get).map(pos -> pos.add(IntVector2.ONE_ONE)).collect(toImmutableSet());
     }
 
-    private NonoGameKnownSolution(ReadOnlyBoard<Boolean> solution, ImmutableSet<IntVector2> solutionPositions) {
+    private NonoGameFlatKnownSolution(ReadOnlyBoard<Boolean> solution, ImmutableSet<IntVector2> solutionPositions) {
         this.solution = solution;
         this.solutionPositions = solutionPositions;
     }
@@ -132,8 +132,8 @@ public class NonoGameKnownSolution implements NonoGame, ReadOnlyBoard<Cell> {
     }
 
     @Override
-    public NonoGame duplicate() {
-        NonoGameKnownSolution copy = new NonoGameKnownSolution(solution, solutionPositions);
+    public FlatNonoGame duplicate() {
+        NonoGameFlatKnownSolution copy = new NonoGameFlatKnownSolution(solution, solutionPositions);
         copy.selections.addAll(selections);
         // override caches with the same caches
         copy.rows = rows;

@@ -6,10 +6,10 @@ import com.google.common.collect.ImmutableSet;
 import common.gui.BoardGui;
 import common.interfaces.Runner;
 import common.utils.Flogger;
-import nonogram.ai.ExhaustiveAI;
+import nonogram.ai.ExhaustiveFlatAI;
 import nonogram.game.Cell;
-import nonogram.game.NonoGame;
-import nonogram.game.NonoGameUnknowns;
+import nonogram.game.FlatNonoGame;
+import nonogram.game.NonoGameFlatUnknowns;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -67,7 +67,7 @@ public class NonogramDriver implements Runner<Cell> {
 
         /*/ // unknowns
 
-        NonoGame game = new NonoGameUnknowns(
+        FlatNonoGame game = new NonoGameFlatUnknowns(
                 // Letter U
                 //ImmutableList.of(4, 1, 1, 4, 0),
                 //ImmutableList.of(0, 2, 2, 2, 4, 0)
@@ -106,12 +106,12 @@ public class NonogramDriver implements Runner<Cell> {
         freeze.set(true);
 
         /*/ //  AI
-        ExhaustiveAI ai = new ExhaustiveAI();
+        ExhaustiveFlatAI ai = new ExhaustiveFlatAI();
 
-        ImmutableSet<NonoGame> winners = ai.solve(game, gui);
+        ImmutableSet<FlatNonoGame> winners = ai.solve(game, gui);
 
         logger.atInfo().log("Displaying winners");
-        for (NonoGame winner : winners) {
+        for (FlatNonoGame winner : winners) {
             gui.updateBoard(winner.getBoard());
             Thread.sleep(1000);
         }
