@@ -78,8 +78,9 @@ public class ConwayBoard implements ConwayReadOnlyBoard {
         return asString();
     }
 
+    @SuppressWarnings("UnusedReturnValue")
     public static class Builder implements ConwayReadOnlyBoard {
-        private HashSet<IntVector2> points = new HashSet<>();
+        private final HashSet<IntVector2> points = new HashSet<>();
 
         private Builder() {
         }

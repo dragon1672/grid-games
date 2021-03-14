@@ -1,4 +1,4 @@
-package nonogram;
+package common;
 
 import java.util.HashSet;
 

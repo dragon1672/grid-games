@@ -1,11 +1,11 @@
 package nonogram.game;
 
 import com.google.common.collect.ImmutableList;
+import common.AssignableSet;
 import common.board.ReadOnlyBoard;
 import common.interfaces.Game;
 import common.utils.Flogger;
 import common.utils.IntVector2;
-import nonogram.AssignableSet;
 
 import java.util.AbstractCollection;
 
