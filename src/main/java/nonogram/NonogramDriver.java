@@ -1,13 +1,14 @@
 package nonogram;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import common.board.BoardLoaders;
 import common.gui.BoardClickListener;
 import common.gui.BoardGui;
 import common.interfaces.Runner;
 import common.utils.Flogger;
 import nonogram.game.Cell;
 import nonogram.game.NonoGame;
+import nonogram.game.NonoGameUnknowns;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -53,7 +54,8 @@ public class NonogramDriver implements Runner<Cell> {
     public void run(BoardGui<Cell> gui) throws InterruptedException {
         logger.atInfo().log("Staring game");
 
-        NonoGame game = new NonoGame(BoardLoaders.generateFromString("" +
+        /* Static
+        NonoGame game = new NonoGameKnownSolution(BoardLoaders.generateFromString("" +
                 "......\n" +
                 ".X..X.\n" +
                 ".X..X.\n" +
@@ -61,6 +63,19 @@ public class NonogramDriver implements Runner<Cell> {
                 ".XXXX.\n" +
                 "......\n" +
                 "", c -> c.equals('X')));
+
+        /*/ // unknowns
+
+        NonoGame game = new NonoGameUnknowns(
+                // Letter U
+                ImmutableList.of(4, 1, 1, 4, 0),
+                ImmutableList.of(0, 2, 2, 2, 4, 0)
+                // Full Game
+                //ImmutableList.of(5,5,2,2,2,5,3),
+                //ImmutableList.of(3,4,3,4,4,3,3)
+        );
+
+        //*/
 
 
         AtomicBoolean freeze = new AtomicBoolean(false);
