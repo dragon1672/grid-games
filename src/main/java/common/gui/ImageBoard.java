@@ -44,6 +44,11 @@ class ImageBoard<T> extends BoardGrid<T> {
     }
 
     @Override
+    public IntVector2 mouse2Board(IntVector2 mousePos) {
+        return BoardGui.mouse2Board(mousePos, getCellDimensions(), cellPadding);
+    }
+
+    @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         if (board != null) {
