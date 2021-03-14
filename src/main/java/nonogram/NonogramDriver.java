@@ -240,7 +240,7 @@ public class NonogramDriver implements Runner<Cell> {
             }
             logger.atInfo().log("Click @ %s", pos);
             try {
-                game.toggle(pos);
+                game.toggleBoardSpace(pos);
             } catch (IllegalArgumentException e) {
             }// swallow
             gui.updateBoard(game.getBoard());

@@ -6,11 +6,8 @@ import common.interfaces.Game;
 import common.utils.Flogger;
 import common.utils.IntVector2;
 import nonogram.AssignableSet;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.AbstractCollection;
-import java.util.HashSet;
-import java.util.Set;
 
 public class NonoGame implements Game<Cell>, ReadOnlyBoard<Cell> {
     private static final Flogger logger = Flogger.getInstance();
@@ -23,7 +20,7 @@ public class NonoGame implements Game<Cell>, ReadOnlyBoard<Cell> {
 
     private final AssignableSet<Integer> satisfiedColumns = new AssignableSet<>();
     private final AssignableSet<Integer> satisfiedRows = new AssignableSet<>();
-    private final Set<IntVector2> selected = new HashSet<>();
+    private final AssignableSet<IntVector2> selected = new AssignableSet<>();
 
     public NonoGame(ImmutableList<ImmutableList<Integer>> columns, ImmutableList<ImmutableList<Integer>> rows) {
         if (columns.isEmpty() || rows.isEmpty()) {
@@ -44,12 +41,18 @@ public class NonoGame implements Game<Cell>, ReadOnlyBoard<Cell> {
     }
 
     // operates in game space
-    public void toggle(IntVector2 pos) {
-        throw new NotImplementedException();
+    public void toggleBoardSpace(IntVector2 pos) {
+        toggleGameSpace(pos.sub(IntVector2.of(rowWidth, columnHeight)));
     }
 
-    public NonoGame duplicate() {
-        throw new NotImplementedException();
+    private boolean validGameSpace(IntVector2 pos) {
+        return 0 <= pos.x && pos.x < columns.size()
+                && 0 <= pos.y && pos.y < rows.size();
+    }
+
+    public void toggleGameSpace(IntVector2 pos) {
+        if (!validGameSpace(pos)) throw new IllegalArgumentException(String.format("invalid pos %s", pos));
+        selected.updateContains(pos, !selected.contains(pos)); // toggle
     }
 
     @Override
