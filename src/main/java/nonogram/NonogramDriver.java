@@ -2,11 +2,9 @@ package nonogram;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
 import common.gui.BoardGui;
 import common.interfaces.Runner;
 import common.utils.Flogger;
-import common.utils.IntVector2;
 import nonogram.ai.ExhaustiveAI;
 import nonogram.game.Cell;
 import nonogram.game.NonoGame;
@@ -16,7 +14,6 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
-import java.util.stream.Collectors;
 
 @SuppressWarnings("ALL")
 public class NonogramDriver implements Runner<Cell> {
@@ -70,11 +67,11 @@ public class NonogramDriver implements Runner<Cell> {
 
         NonoGame game = new NonoGameUnknowns(
                 // Letter U
-                ImmutableList.of(4, 1, 1, 4, 0),
-                ImmutableList.of(0, 2, 2, 2, 4, 0)
+                //ImmutableList.of(4, 1, 1, 4, 0),
+                //ImmutableList.of(0, 2, 2, 2, 4, 0)
                 // Full Game
-                //ImmutableList.of(5,5,2,2,2,5,3),
-                //ImmutableList.of(3,4,3,4,4,3,3)
+                ImmutableList.of(5, 5, 2, 2, 2, 5, 3),
+                ImmutableList.of(3, 4, 3, 4, 4, 3, 3)
         );
 
         //*/
@@ -106,9 +103,7 @@ public class NonogramDriver implements Runner<Cell> {
         /*/ //  AI
         ExhaustiveAI ai = new ExhaustiveAI();
 
-        ImmutableSet<IntVector2> solution = ai.getSolution(game, gui);
-
-        logger.atInfo().log("Soulution found! %s", solution.stream().map(s -> s.toString()).collect(Collectors.joining(", ")));
+        ai.solve(game, gui);
 
         //*/
 

@@ -143,4 +143,19 @@ public class NonoGameKnownSolution implements NonoGame, ReadOnlyBoard<Cell> {
         copy.headerMemo = headerMemo;
         return copy;
     }
+
+    @Override
+    public boolean equals(Object that) {
+        return this == that || that instanceof ReadOnlyBoard && isEqualTo((ReadOnlyBoard<?>) that);
+    }
+
+    @Override
+    public int hashCode() {
+        return getHashCode();
+    }
+
+    @Override
+    public String toString() {
+        return asString();
+    }
 }
