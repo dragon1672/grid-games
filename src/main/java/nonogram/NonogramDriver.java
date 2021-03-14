@@ -1,15 +1,15 @@
 package nonogram;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import common.board.BoardLoaders;
 import common.gui.BoardGui;
 import common.interfaces.Runner;
 import common.utils.Flogger;
 import nonogram.ai.ExhaustiveAI;
 import nonogram.game.Cell;
 import nonogram.game.NonoGame;
-import nonogram.game.NonoGameKnownSolution;
+import nonogram.game.NonoGameUnknowns;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -42,6 +42,7 @@ public class NonogramDriver implements Runner<Cell> {
             .put(Cell.N6, loadImage("6.PNG"))
             .put(Cell.N7, loadImage("7.PNG"))
             .put(Cell.N8, loadImage("8.PNG"))
+            .put(Cell.UNKNOWN, loadImage("BOMB.PNG"))
             .put(Cell.SELECTED, loadImage("SELECTED.PNG"))
             .build();
 
@@ -54,7 +55,7 @@ public class NonogramDriver implements Runner<Cell> {
     public void run(BoardGui<Cell> gui) throws InterruptedException {
         logger.atInfo().log("Staring game");
 
-        //* Static
+        /* Static
         NonoGame game = new NonoGameKnownSolution(BoardLoaders.generateFromString("" +
                 "......\n" +
                 ".X..X.\n" +
@@ -71,8 +72,11 @@ public class NonogramDriver implements Runner<Cell> {
                 //ImmutableList.of(4, 1, 1, 4, 0),
                 //ImmutableList.of(0, 2, 2, 2, 4, 0)
                 // Full Game
-                ImmutableList.of(5, 5, 2, 2, 2, 5, 3),
-                ImmutableList.of(3, 4, 3, 4, 4, 3, 3)
+                //ImmutableList.of(5, 5, 2, 2, 2, 5, 3),
+                //ImmutableList.of(3, 4, 3, 4, 4, 3, 3)
+                // Big Game
+                ImmutableList.of(37, 13, 24, 23, 17, 24, 28, 31, 23, 17, 17, 23, 20, 16, 15, 13, 18, 18, 18, 19, 19, 21, 16, 18, 20, 18, 18, 20, 21, 25, 24, 26, 21, 21, 34),
+                ImmutableList.of(19, 14, 15, 13, 12, 14, 15, 15, 18, 18, 18, 17, 15, 16, 17, 27, 25, 9, 8, 17, 21, 28, 20, 21, 17, 18, 20, 22, 19, 19, 15, 18, 17, 16, 12, 11, 11, 11, 10, 11, 9, 12, 14, 12, 30)
         );
 
         //*/

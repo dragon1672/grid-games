@@ -24,19 +24,17 @@ import static com.google.common.collect.ImmutableSet.toImmutableSet;
 public class NonoGameKnownSolution implements NonoGame, ReadOnlyBoard<Cell> {
 
     private final Set<IntVector2> selections = new HashSet<>();
-    private LoadingCache<IntVector2, Cell> headerMemo = CacheBuilder.newBuilder()
+    private LoadingCache<IntVector2, Integer> headerMemo = CacheBuilder.newBuilder()
             .build(CacheLoader.from(this::extractHeader));
     private Supplier<ImmutableList<Integer>> columns = Suppliers.memoize(() ->
             IntStream.rangeClosed(1, getWidth())
                     .mapToObj(x -> IntVector2.of(x, 0))
                     .map(headerMemo::getUnchecked)
-                    .map(c -> c.value)
                     .collect(toImmutableList()));
     private Supplier<ImmutableList<Integer>> rows = Suppliers.memoize(() ->
             IntStream.rangeClosed(1, getHeight())
                     .mapToObj(y -> IntVector2.of(0, y))
                     .map(headerMemo::getUnchecked)
-                    .map(c -> c.value)
                     .collect(toImmutableList()));
 
     private final ReadOnlyBoard<Boolean> solution;
@@ -54,7 +52,7 @@ public class NonoGameKnownSolution implements NonoGame, ReadOnlyBoard<Cell> {
         this.solutionPositions = solutionPositions;
     }
 
-    private Cell extractHeader(IntVector2 start) {
+    private int extractHeader(IntVector2 start) {
         IntVector2 dir;
         if (start.x == 0) {
             dir = IntVector2.X_DIR;
@@ -71,7 +69,7 @@ public class NonoGameKnownSolution implements NonoGame, ReadOnlyBoard<Cell> {
                 sum++;
             }
         }
-        return Cell.cellNumMap.inverse().get(sum);
+        return sum;
     }
 
     @Override
@@ -82,10 +80,10 @@ public class NonoGameKnownSolution implements NonoGame, ReadOnlyBoard<Cell> {
         IntVector2 pos = IntVector2.of(x, y);
         // getting a header
         if (x == 0) {
-            return headerMemo.getUnchecked(pos);
+            return Cell.cellNumMap.inverse().getOrDefault(headerMemo.getUnchecked(pos), Cell.UNKNOWN);
         }
         if (y == 0) {
-            return headerMemo.getUnchecked(pos);
+            return Cell.cellNumMap.inverse().getOrDefault(headerMemo.getUnchecked(pos), Cell.UNKNOWN);
         }
         // Sub 1 to map coords to solution space
         return selections.contains(pos) ? Cell.SELECTED : Cell.N0;

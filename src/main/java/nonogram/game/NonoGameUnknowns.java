@@ -23,11 +23,11 @@ public class NonoGameUnknowns implements NonoGame, ReadOnlyBoard<Cell> {
         }
         for (int i : columns) {
             if (i > rows.size()) throw new IllegalArgumentException(String.format("column value %d is impossible", i));
-            if (i > 9) throw new IllegalArgumentException("max size of 9 (image assets)");
+            //if (i > 8) throw new IllegalArgumentException("max size of 9 (image assets)");
         }
         for (int i : rows) {
             if (i > columns.size()) throw new IllegalArgumentException(String.format("row value %d is impossible", i));
-            if (i > 9) throw new IllegalArgumentException("max size of 9 (image assets)");
+            //if (i > 8) throw new IllegalArgumentException("max size of 9 (image assets)");
         }
         this.columns = columns;
         this.rows = rows;

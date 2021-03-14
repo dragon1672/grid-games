@@ -3,22 +3,21 @@ package nonogram.game;
 import com.google.common.collect.ImmutableBiMap;
 
 public enum Cell {
-    N0(true, 0),
-    N1(true, 1),
-    N2(true, 2),
-    N3(true, 3),
-    N4(true, 4),
-    N5(true, 5),
-    N6(true, 6),
-    N7(true, 7),
-    N8(true, 8),
-    SELECTED(false, 1);
+    N0(0),
+    N1(1),
+    N2(2),
+    N3(3),
+    N4(4),
+    N5(5),
+    N6(6),
+    N7(7),
+    N8(8),
+    UNKNOWN(99),
+    SELECTED(1);
 
-    public final boolean finalState;
     public final int value;
 
-    Cell(boolean finalState, int value) {
-        this.finalState = finalState;
+    Cell(int value) {
         this.value = value;
     }
 
