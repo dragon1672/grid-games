@@ -3,7 +3,9 @@ package nonogram.ai;
 import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableSet;
 import common.gui.BoardGui;
+import common.utils.AsciiBoard;
 import common.utils.BoardUtils;
+import common.utils.Flogger;
 import common.utils.IntVector2;
 import nonogram.game.Cell;
 import nonogram.game.NonoGame;
@@ -12,6 +14,7 @@ import java.util.*;
 import java.util.function.Supplier;
 
 public class ExhaustiveAI {
+    private static final Flogger logger = Flogger.getInstance();
 
     private static class Move implements Comparable<Move> {
         private final NonoGame game;
@@ -79,7 +82,8 @@ public class ExhaustiveAI {
         return possibleMoves;
     }
 
-    private void smartSolution(NonoGame game, BoardGui<Cell> gui) {
+    private ImmutableSet<NonoGame> smartSolution(NonoGame game, BoardGui<Cell> gui) {
+        ImmutableSet.Builder<NonoGame> winningGames = ImmutableSet.builder();
         Set<Move> seenMoves = new HashSet<>();
         TreeSet<Move> moves = new TreeSet<>();
         moves.add(new Move(game.duplicate()));
@@ -90,17 +94,18 @@ public class ExhaustiveAI {
             if (move == null || seenMoves.contains(move)) continue;
             seenMoves.add(move);
             gui.updateBoard(move.game.getBoard());
-            try {
-                Thread.sleep(10);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
 
             if (move.possibleMoves.get().isEmpty()) {
                 // success!
                 if (move.game.isComplete()) {
+                    logger.atInfo().log("Valid board solution found!\n%s", AsciiBoard.boardToString(move.game.getBoard(), c -> c == Cell.SELECTED ? 'x' : c.toString().charAt(0)));
                     gui.updateBoard(move.game.getBoard());
-                    return;
+                    winningGames.add(move.game);
+                    try {
+                        Thread.sleep(100);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }
             } else {
                 move.possibleMoves.get().forEach(pos -> {
@@ -110,11 +115,11 @@ public class ExhaustiveAI {
                 });
             }
         }
-
+        return winningGames.build();
     }
 
-    public void solve(NonoGame game, BoardGui<Cell> gui) {
+    public ImmutableSet<NonoGame> solve(NonoGame game, BoardGui<Cell> gui) {
         //toggleAllPossibleMoves(game, gui);
-        smartSolution(game, gui);
+        return smartSolution(game, gui);
     }
 }

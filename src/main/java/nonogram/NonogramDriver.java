@@ -1,21 +1,22 @@
 package nonogram;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
+import common.board.BoardLoaders;
 import common.gui.BoardGui;
 import common.interfaces.Runner;
 import common.utils.Flogger;
 import nonogram.ai.ExhaustiveAI;
 import nonogram.game.Cell;
 import nonogram.game.NonoGame;
-import nonogram.game.NonoGameUnknowns;
+import nonogram.game.NonoGameKnownSolution;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 
-@SuppressWarnings("ALL")
+
 public class NonogramDriver implements Runner<Cell> {
     private static final Flogger logger = Flogger.getInstance();
 
@@ -53,7 +54,7 @@ public class NonogramDriver implements Runner<Cell> {
     public void run(BoardGui<Cell> gui) throws InterruptedException {
         logger.atInfo().log("Staring game");
 
-        /* Static
+        //* Static
         NonoGame game = new NonoGameKnownSolution(BoardLoaders.generateFromString("" +
                 "......\n" +
                 ".X..X.\n" +
@@ -103,7 +104,13 @@ public class NonogramDriver implements Runner<Cell> {
         /*/ //  AI
         ExhaustiveAI ai = new ExhaustiveAI();
 
-        ai.solve(game, gui);
+        ImmutableSet<NonoGame> winners = ai.solve(game, gui);
+
+        logger.atInfo().log("Displaying winners");
+        for (NonoGame winner : winners) {
+            gui.updateBoard(winner.getBoard());
+            Thread.sleep(1000);
+        }
 
         //*/
 
