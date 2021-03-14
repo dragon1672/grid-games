@@ -50,14 +50,52 @@ public class NonoGame implements Game<Cell>, ReadOnlyBoard<Cell> {
                 && 0 <= pos.y && pos.y < rows.size();
     }
 
+    private boolean rowSatisfied(int y) {
+        int satisfiedCount = 0;
+        int blockSize = 0;
+        int columnIndex = 0;
+        for (int x = 0; x < getWidth(); x++) {
+            IntVector2 pos = IntVector2.of(x, y);
+            if (selected.contains(pos)) blockSize++;
+            if (blockSize == rows.get(y).get(columnIndex)) {
+                blockSize = 0;
+                satisfiedCount++;
+                columnIndex++;
+                if (columnIndex >= rows.get(y).size()) break;
+            }
+        }
+        return satisfiedCount == rows.get(y).size();
+    }
+
+    private boolean columnSatisfied(int x) {
+        int satisfiedCount = 0;
+        int blockSize = 0;
+        int rowIndex = 0;
+        for (int y = 0; y < getHeight(); y++) {
+            IntVector2 pos = IntVector2.of(x, y);
+            if (selected.contains(pos)) blockSize++;
+            if (blockSize == columns.get(x).get(rowIndex)) {
+                blockSize = 0;
+                satisfiedCount++;
+                rowIndex++;
+                if (rowIndex >= columns.get(x).size()) break;
+            }
+        }
+        return satisfiedCount == columns.get(x).size();
+    }
+
     public void toggleGameSpace(IntVector2 pos) {
         if (!validGameSpace(pos)) throw new IllegalArgumentException(String.format("invalid pos %s", pos));
         selected.updateContains(pos, !selected.contains(pos)); // toggle
+
+        // Update satisfied rows
+        satisfiedRows.updateContains(pos.y, rowSatisfied(pos.y));
+        satisfiedColumns.updateContains(pos.x, columnSatisfied(pos.x));
     }
 
     @Override
     public boolean isComplete() {
-        return false;
+        return satisfiedColumns.size() == columns.size() && satisfiedRows.size() == rows.size();
     }
 
     @Override
@@ -102,5 +140,20 @@ public class NonoGame implements Game<Cell>, ReadOnlyBoard<Cell> {
     @Override
     public int getHeight() {
         return rows.size() + columnHeight;
+    }
+
+    @Override
+    public boolean equals(Object that) {
+        return this == that || that instanceof ReadOnlyBoard && isEqualTo((ReadOnlyBoard<?>) that);
+    }
+
+    @Override
+    public int hashCode() {
+        return getHashCode();
+    }
+
+    @Override
+    public String toString() {
+        return asString();
     }
 }

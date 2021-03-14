@@ -127,18 +127,7 @@ public class NonogramDriver implements Runner<Cell> {
     private void runFullNono(BoardGui<Cell> gui) throws InterruptedException {
         logger.atInfo().log("Staring game");
 
-        /* Static
-        NonoGame game = new NonoGameKnownSolution(BoardLoaders.generateFromString("" +
-                "......\n" +
-                ".X..X.\n" +
-                ".X..X.\n" +
-                ".X..X.\n" +
-                ".XXXX.\n" +
-                "......\n" +
-                "", c -> c.equals('X')));
-
-        /*/ // unknowns
-
+        /* Big
         NonoGame game = new NonoGame(
                 ImmutableList.of(
                         ImmutableList.of(7, 11, 4, 4, 11).reverse(),
@@ -227,7 +216,32 @@ public class NonogramDriver implements Runner<Cell> {
                         ImmutableList.of()
                 )
         );
+        /*/ //small
 
+        // .X....X.
+        // .X.XX.X.
+        // .X....X.
+        // .XXXXXX.
+        // ........
+
+        NonoGame game = new NonoGame(
+                ImmutableList.of(
+                        ImmutableList.of(4),
+                        ImmutableList.of(1),
+                        ImmutableList.of(1, 1),
+                        ImmutableList.of(1, 1),
+                        ImmutableList.of(1),
+                        ImmutableList.of(4),
+                        ImmutableList.of()
+                ),
+                ImmutableList.of(
+                        ImmutableList.of(1, 1),
+                        ImmutableList.of(1, 2, 1),
+                        ImmutableList.of(1, 1),
+                        ImmutableList.of(6),
+                        ImmutableList.of()
+                )
+        );
         //*/
 
 
