@@ -5,6 +5,8 @@ import common.board.ReadOnlyBoard;
 import common.utils.IntVector2;
 import nonogram.AssignableSet;
 
+import java.util.Set;
+
 @SuppressWarnings("UnstableApiUsage")
 public class NonoGameUnknowns implements NonoGame, ReadOnlyBoard<Cell> {
 
@@ -36,6 +38,14 @@ public class NonoGameUnknowns implements NonoGame, ReadOnlyBoard<Cell> {
         for (int i = 0; i < rows.size(); i++) {
             if (rows.get(i) == 0) satisfiedRows.add(i + 1);
         }
+    }
+
+    private NonoGameUnknowns(ImmutableList<Integer> columns, ImmutableList<Integer> rows, Set<IntVector2> selections, Set<Integer> satisfiedColumns, Set<Integer> satisfiedRows) {
+        this.columns = columns;
+        this.rows = rows;
+        this.selections.addAll(selections);
+        this.satisfiedRows.addAll(satisfiedRows);
+        this.satisfiedColumns.addAll(satisfiedColumns);
     }
 
     @Override
@@ -104,5 +114,10 @@ public class NonoGameUnknowns implements NonoGame, ReadOnlyBoard<Cell> {
             if (selections.contains(IntVector2.of(pos.x, y))) yCount++;
         }
         satisfiedColumns.updateContains(pos.x, yCount == columns.get(pos.x - 1));
+    }
+
+    @Override
+    public NonoGame duplicate() {
+        return new NonoGameUnknowns(columns, rows, selections, satisfiedColumns, satisfiedRows);
     }
 }

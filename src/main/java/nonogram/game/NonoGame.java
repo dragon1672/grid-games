@@ -10,4 +10,6 @@ public interface NonoGame extends Game<Cell> {
     ImmutableList<Integer> getRows();
 
     void toggle(IntVector2 pos);
+
+    NonoGame duplicate();
 }

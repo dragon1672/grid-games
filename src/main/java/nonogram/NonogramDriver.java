@@ -2,10 +2,12 @@ package nonogram;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import common.gui.BoardClickListener;
+import com.google.common.collect.ImmutableSet;
 import common.gui.BoardGui;
 import common.interfaces.Runner;
 import common.utils.Flogger;
+import common.utils.IntVector2;
+import nonogram.ai.ExhaustiveAI;
 import nonogram.game.Cell;
 import nonogram.game.NonoGame;
 import nonogram.game.NonoGameUnknowns;
@@ -14,7 +16,7 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
 
 @SuppressWarnings("ALL")
 public class NonogramDriver implements Runner<Cell> {
@@ -78,8 +80,9 @@ public class NonogramDriver implements Runner<Cell> {
         //*/
 
 
-        AtomicBoolean freeze = new AtomicBoolean(false);
 
+        /* Human
+        AtomicBoolean freeze = new AtomicBoolean(false);
         gui.mouseClickEventBus.register(new BoardClickListener(pos -> {
             if (freeze.get()) {
                 logger.atInfo().log("Game is complete, input is frozen!");
@@ -98,10 +101,19 @@ public class NonogramDriver implements Runner<Cell> {
             Thread.sleep(100);
             gui.updateBoard(game.getBoard());
         }
+        freeze.set(true);
+
+        /*/ //  AI
+        ExhaustiveAI ai = new ExhaustiveAI();
+
+        ImmutableSet<IntVector2> solution = ai.getSolution(game, gui);
+
+        logger.atInfo().log("Soulution found! %s", solution.stream().map(s -> s.toString()).collect(Collectors.joining(", ")));
+
+        //*/
 
 
         logger.atInfo().log("Complete");
-        freeze.set(true);
     }
 
     public static void main(String... args) throws InterruptedException {
