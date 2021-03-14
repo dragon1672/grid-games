@@ -90,11 +90,11 @@ public class MineSweeperDriver implements Runner<Cell> {
                 // Beginner has a total of ten mines and the board size is either 8 × 8, 9 × 9, or 10 × 10
                 //MineSweeper.create(10, 10, 10); // 10% bombs
                 // Intermediate has 40 mines and also varies in size between 13 × 15 and 16 × 16
-                //MineSweeper.create(16, 16, 40); // 15.625% bombs
-                // expert has 99 mines and is always 16 × 30 (or 30 × 16)
-                //MineSweeper.create(16, 30, 99); // 20.625% bombs
-                // Custom expert level
-                MineSweeper.create(10, 10, 20); // 20% bombs
+                MineSweeper.create(16, 16, 40); // 15.625% bombs
+        // expert has 99 mines and is always 16 × 30 (or 30 × 16)
+        //MineSweeper.create(16, 30, 99); // 20.625% bombs
+        // Custom expert level
+        //MineSweeper.create(10, 10, 20); // 20% bombs
         // MEGA Custom
         //MineSweeper.create(100, 100, 2000); // 20% bombs
 

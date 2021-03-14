@@ -145,7 +145,7 @@ public class SmaryPants implements MineSweeperAI {
     }
 
     private static double calculateProbability(IntVector2 pos, ImmutableList<DangerAnalysis> bombAnalysisResults, int numBombs) {
-        return bombAnalysisResults
+        return 100 * bombAnalysisResults
                 .parallelStream()
                 .mapToDouble(analysis -> analysis.dangerAnalysisOfPosition(pos, numBombs))
                 .average()
@@ -153,6 +153,7 @@ public class SmaryPants implements MineSweeperAI {
     }
 
     private static Map.Entry<IntVector2, Double> calculateLowestProbFromUnknowns(ImmutableMap<IntVector2, Danger> cellStateMap, ReadOnlyBoard<Cell> board, int numBombs) {
+        logger.atInfo().log("calculateLowestProbFromUnknowns");
         ImmutableList<DangerAnalysis> bombAnalysisResults = getPossibleBombLocations(cellStateMap, board, numBombs);
         // Map each unknown to a probability
 
@@ -162,7 +163,7 @@ public class SmaryPants implements MineSweeperAI {
                 .parallelStream()
                 .collect(ImmutableMap.toImmutableMap(k -> k, pos -> calculateProbability(pos, bombAnalysisResults, numBombs)));
         Map.Entry<IntVector2, Double> lowestProb = mineProbabilities.entrySet().stream().min(Comparator.comparingDouble(Map.Entry::getValue)).orElseThrow(() -> new IllegalArgumentException("We gotta have some moves!"));
-        logger.atInfo().log("Determined safest option of %s with a %f chance to be a bomb from %d possible states",
+        logger.atInfo().log("Determined safest option of %s with a %f %% chance to be a bomb from %d possible states",
                 lowestProb.getKey(), lowestProb.getValue(), bombAnalysisResults.size());
         return lowestProb;
     }
