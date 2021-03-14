@@ -6,6 +6,10 @@ import javax.annotation.CheckReturnValue;
  * Immutable 2 dimensional vector of ints
  */
 public class IntVector2 {
+    public static final IntVector2 ONE_ONE = IntVector2.of(1, 1);
+    public static final IntVector2 X_DIR = IntVector2.of(1, 0);
+    public static final IntVector2 Y_DIR = IntVector2.of(0, 1);
+
     public final int x, y;
 
     private IntVector2(int x, int y) {
@@ -31,6 +35,11 @@ public class IntVector2 {
     @CheckReturnValue
     public IntVector2 sub(IntVector2 that) {
         return of(this.x - that.x, this.y - that.y);
+    }
+
+    @CheckReturnValue
+    public IntVector2 mul(double scale) {
+        return of((int) (x * scale), (int) (y * scale));
     }
 
     @CheckReturnValue

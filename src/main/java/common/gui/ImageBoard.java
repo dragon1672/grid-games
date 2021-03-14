@@ -46,6 +46,8 @@ class ImageBoard<T> extends BoardGrid<T> {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        paintBoardWithImages(g, board);
+        if (board != null) {
+            paintBoardWithImages(g, board);
+        }
     }
 }
