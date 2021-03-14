@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 
+@SuppressWarnings("UnstableApiUsage")
 public class NonogramDriver implements Runner<Cell> {
     private static final Flogger logger = Flogger.getInstance();
 
@@ -255,7 +256,7 @@ public class NonogramDriver implements Runner<Cell> {
             logger.atInfo().log("Click @ %s", pos);
             try {
                 game.toggleBoardSpace(pos);
-            } catch (IllegalArgumentException e) {
+            } catch (IllegalArgumentException ignored) {
             }// swallow
             gui.updateBoard(game.getBoard());
         }));

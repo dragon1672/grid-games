@@ -57,11 +57,15 @@ public class NonoGame implements Game<Cell>, ReadOnlyBoard<Cell> {
         for (int x = 0; x < getWidth(); x++) {
             IntVector2 pos = IntVector2.of(x, y);
             if (selected.contains(pos)) blockSize++;
-            if (blockSize == rows.get(y).get(columnIndex)) {
-                blockSize = 0;
-                satisfiedCount++;
-                columnIndex++;
-                if (columnIndex >= rows.get(y).size()) break;
+            else {
+                if (blockSize == rows.get(y).get(columnIndex)) {
+                    blockSize = 0;
+                    satisfiedCount++;
+                    columnIndex++;
+                    if (columnIndex >= rows.get(y).size()) break;
+                } else {
+                    if (blockSize > 0) return false; // doesn't match the required block pattern
+                }
             }
         }
         return satisfiedCount == rows.get(y).size();
@@ -74,11 +78,15 @@ public class NonoGame implements Game<Cell>, ReadOnlyBoard<Cell> {
         for (int y = 0; y < getHeight(); y++) {
             IntVector2 pos = IntVector2.of(x, y);
             if (selected.contains(pos)) blockSize++;
-            if (blockSize == columns.get(x).get(rowIndex)) {
-                blockSize = 0;
-                satisfiedCount++;
-                rowIndex++;
-                if (rowIndex >= columns.get(x).size()) break;
+            else {
+                if (blockSize == columns.get(x).get(rowIndex)) {
+                    blockSize = 0;
+                    satisfiedCount++;
+                    rowIndex++;
+                    if (rowIndex >= columns.get(x).size()) break;
+                } else {
+                    if (blockSize > 0) return false; // doesn't match the required block pattern
+                }
             }
         }
         return satisfiedCount == columns.get(x).size();
