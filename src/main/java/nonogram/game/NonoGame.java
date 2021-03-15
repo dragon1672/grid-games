@@ -8,6 +8,8 @@ import common.utils.Flogger;
 import common.utils.IntVector2;
 
 import java.util.AbstractCollection;
+import java.util.Collections;
+import java.util.Set;
 
 public class NonoGame implements Game<Cell>, ReadOnlyBoard<Cell> {
     private static final Flogger logger = Flogger.getInstance();
@@ -40,6 +42,17 @@ public class NonoGame implements Game<Cell>, ReadOnlyBoard<Cell> {
         }
     }
 
+    // Private for duplication, no verification checks.
+    private NonoGame(ImmutableList<ImmutableList<Integer>> columns, ImmutableList<ImmutableList<Integer>> rows, int columnHeight, int rowWidth, Set<Integer> satisfiedColumns, Set<Integer> satisfiedRows, Set<IntVector2> selected) {
+        this.columns = columns;
+        this.rows = rows;
+        this.columnHeight = columnHeight;
+        this.rowWidth = rowWidth;
+        this.satisfiedColumns.addAll(satisfiedColumns);
+        this.satisfiedRows.addAll(satisfiedRows);
+        this.selected.addAll(selected);
+    }
+
     // operates in game space
     public void toggleBoardSpace(IntVector2 pos) {
         toggleGameSpace(pos.sub(IntVector2.of(rowWidth, columnHeight)));
@@ -58,6 +71,7 @@ public class NonoGame implements Game<Cell>, ReadOnlyBoard<Cell> {
             IntVector2 pos = IntVector2.of(x, y);
             if (selected.contains(pos)) blockSize++;
             else {
+                if (rows.get(y).isEmpty()) return false;
                 if (blockSize == rows.get(y).get(columnIndex)) {
                     blockSize = 0;
                     satisfiedCount++;
@@ -79,6 +93,7 @@ public class NonoGame implements Game<Cell>, ReadOnlyBoard<Cell> {
             IntVector2 pos = IntVector2.of(x, y);
             if (selected.contains(pos)) blockSize++;
             else {
+                if (columns.get(x).isEmpty()) return false;
                 if (blockSize == columns.get(x).get(rowIndex)) {
                     blockSize = 0;
                     satisfiedCount++;
@@ -93,7 +108,8 @@ public class NonoGame implements Game<Cell>, ReadOnlyBoard<Cell> {
     }
 
     public void toggleGameSpace(IntVector2 pos) {
-        if (!validGameSpace(pos)) throw new IllegalArgumentException(String.format("invalid pos %s", pos));
+        if (!validGameSpace(pos))
+            throw new IllegalArgumentException(String.format("invalid pos %s", pos));
         selected.updateContains(pos, !selected.contains(pos)); // toggle
 
         // Update satisfied rows
@@ -109,6 +125,18 @@ public class NonoGame implements Game<Cell>, ReadOnlyBoard<Cell> {
     @Override
     public ReadOnlyBoard<Cell> getBoard() {
         return this;
+    }
+
+    public int getGameWidth() {
+        return columns.size();
+    }
+
+    public int getGameHeight() {
+        return rows.size();
+    }
+
+    public Set<IntVector2> getSelected() {
+        return Collections.unmodifiableSet(selected);
     }
 
     // ReadOnlyBoard glues together column headers & game space
@@ -163,5 +191,9 @@ public class NonoGame implements Game<Cell>, ReadOnlyBoard<Cell> {
     @Override
     public String toString() {
         return asString();
+    }
+
+    public NonoGame duplicate() {
+        return new NonoGame(columns, rows, columnHeight, rowWidth, satisfiedColumns, satisfiedRows, selected);
     }
 }

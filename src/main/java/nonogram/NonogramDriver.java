@@ -3,11 +3,11 @@ package nonogram;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import common.gui.BoardClickListener;
 import common.gui.BoardGui;
 import common.interfaces.Runner;
 import common.utils.Flogger;
 import nonogram.ai.ExhaustiveFlatAI;
+import nonogram.ai.multi_strat.ExhaustiveAI;
 import nonogram.game.Cell;
 import nonogram.game.FlatNonoGame;
 import nonogram.game.NonoGame;
@@ -17,7 +17,6 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 
 @SuppressWarnings("UnstableApiUsage")
@@ -246,7 +245,7 @@ public class NonogramDriver implements Runner<Cell> {
         //*/
 
 
-        //* Human
+        /* Human
         AtomicBoolean freeze = new AtomicBoolean(false);
         gui.mouseClickEventBus.register(new BoardClickListener(pos -> {
             if (freeze.get()) {
@@ -267,6 +266,18 @@ public class NonogramDriver implements Runner<Cell> {
             gui.updateBoard(game.getBoard());
         }
         freeze.set(true);
+
+        /*/ // AI
+
+        ExhaustiveAI ai = new ExhaustiveAI();
+
+        ImmutableSet<NonoGame> winners = ai.solve(game, gui);
+
+        logger.atInfo().log("Displaying winners");
+        for (NonoGame winner : winners) {
+            gui.updateBoard(winner.getBoard());
+            Thread.sleep(1000);
+        }
 
         //*/
 
