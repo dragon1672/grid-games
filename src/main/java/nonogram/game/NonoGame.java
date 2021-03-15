@@ -108,8 +108,7 @@ public class NonoGame implements Game<Cell>, ReadOnlyBoard<Cell> {
     }
 
     public void toggleGameSpace(IntVector2 pos) {
-        if (!validGameSpace(pos))
-            throw new IllegalArgumentException(String.format("invalid pos %s", pos));
+        if (!validGameSpace(pos)) throw new IllegalArgumentException(String.format("invalid pos %s", pos));
         selected.updateContains(pos, !selected.contains(pos)); // toggle
 
         // Update satisfied rows

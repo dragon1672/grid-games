@@ -222,24 +222,25 @@ public class NonogramDriver implements Runner<Cell> {
         // .X.XX.X.
         // .X....X.
         // .XXXXXX.
-        // ........
+        // XX.XX.XX
 
         NonoGame game = new NonoGame(
                 ImmutableList.of(
-                        ImmutableList.of(4),
                         ImmutableList.of(1),
-                        ImmutableList.of(1, 1),
-                        ImmutableList.of(1, 1),
+                        ImmutableList.of(5),
                         ImmutableList.of(1),
-                        ImmutableList.of(4),
-                        ImmutableList.of()
+                        ImmutableList.of(1, 2),
+                        ImmutableList.of(1, 2),
+                        ImmutableList.of(1),
+                        ImmutableList.of(5),
+                        ImmutableList.of(1)
                 ),
                 ImmutableList.of(
                         ImmutableList.of(1, 1),
                         ImmutableList.of(1, 2, 1),
                         ImmutableList.of(1, 1),
                         ImmutableList.of(6),
-                        ImmutableList.of()
+                        ImmutableList.of(2, 2, 2)
                 )
         );
         //*/
